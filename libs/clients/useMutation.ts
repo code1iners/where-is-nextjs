@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 interface SimpleError {
-  code: number;
+  code: string;
   message: string;
 }
 

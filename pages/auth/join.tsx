@@ -30,22 +30,21 @@ export default function Join() {
   const isConfirmPasswordValid = (confirmPasswordValue: string) =>
     getValues("password") === confirmPasswordValue;
 
-  const onSubmitValid = (data: JoinForm) => {
-    join(data);
+  const onSubmitValid = (form: JoinForm) => {
+    if (!joinLoading) join(form);
   };
 
   useEffect(() => {
     if (joinOk && joinData) {
       // Set user session.
-      console.log(joinData.token);
       sessionStorage.setItem("ACCESS_TOKEN", joinData.token);
 
       router.push("/");
     } else {
       // Error toast.
-      console.log(joinError);
+      console.error(joinError);
     }
-  }, [joinData, joinError, joinLoading]);
+  }, [joinOk, joinData, joinError, joinLoading]);
 
   return (
     <main className="m-5">
@@ -153,13 +152,14 @@ export default function Join() {
         />
       </form>
 
-      <HorizontalDivider margin="lg" />
+      <HorizontalDivider margin="md" />
 
       <nav className="flex justify-center">
         <Link href={"/auth/login"}>
           <a>
             <span className="tracking-wider">
-              Do you have an <span className="text-purple-500">Account</span>
+              Do you have an
+              <span className="text-purple-500 mx-1">Account</span>
               already?
             </span>
           </a>

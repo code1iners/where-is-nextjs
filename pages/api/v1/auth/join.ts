@@ -34,7 +34,7 @@ async function handler(request: JoinRequestBody, response: NextApiResponse) {
       return response.status(400).json({
         ok: false,
         error: {
-          code: 400,
+          code: "002",
           message: "The email already exist.",
         },
       });
@@ -70,7 +70,7 @@ async function handler(request: JoinRequestBody, response: NextApiResponse) {
     return response.status(500).json({
       ok: false,
       error: {
-        code: 500,
+        code: "001",
         message: "Failed create a new account.",
       },
     });

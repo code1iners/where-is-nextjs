@@ -3,7 +3,6 @@ import apiCaller from "@libs/servers/apiCaller";
 import jwt from "jsonwebtoken";
 
 async function handler(request: NextApiRequest, response: NextApiResponse) {
-  console.log(request.cookies);
   const { authorization } = request.headers;
   if (!authorization) {
     return response.status(401).json({

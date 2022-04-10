@@ -15,7 +15,13 @@ export default function apiCaller({
 }: CallerProps) {
   return async (request: NextApiRequest, response: NextApiResponse) => {
     if (request.method && !methods.includes(request.method as any)) {
-      return response.status(405).end();
+      return response.status(405).json({
+        ok: false,
+        error: {
+          code: "002",
+          message: "The http method not allowed.",
+        },
+      });
     }
 
     try {
@@ -25,7 +31,7 @@ export default function apiCaller({
       return response.status(500).json({
         ok: false,
         error: {
-          code: 500,
+          code: "001",
           message: "Failed call the api service.",
         },
       });
