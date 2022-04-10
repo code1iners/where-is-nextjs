@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import useAuth from "@libs/clients/useAuth";
 
 function MyApp({ Component, pageProps, router }: AppProps) {
+  const [showing, setShowing] = useState(false);
   const { checker } = useAuth();
   const isNotPrivateUrls = ["/auth/login", "/auth/join"];
   useEffect(() => {
@@ -13,13 +14,16 @@ function MyApp({ Component, pageProps, router }: AppProps) {
         const { ok, error } = await checker();
         if (!ok) {
           console.error(error);
-          router.push("/auth/login");
+          router.replace("/auth/login");
         }
+        setShowing(true);
+      } else {
+        setShowing(true);
       }
     })();
   }, []);
 
-  return <Component {...pageProps} />;
+  return showing ? <Component {...pageProps} /> : null;
 }
 
 export default MyApp;

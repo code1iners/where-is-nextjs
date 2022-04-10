@@ -7,8 +7,6 @@ async function handler(request: NextApiRequest, response: NextApiResponse) {
   if (!authorization) return response.status(401).json({ ok: false });
 
   const isValid = jwt.verify(authorization, process.env.SECRET_KEY + "");
-  console.log("isValid", isValid);
-
   if (!isValid) return response.status(401).json({ ok: false });
 
   return response.status(200).json({ ok: true });
