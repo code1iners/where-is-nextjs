@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+  .input-text {
+    @apply border border-gray-500 rounded-md px-3 py-2 tracking-widest focus:outline-purple-500;
+  }
+
+  .error-message {
+    @apply text-red-400 tracking-wide mt-1;
+  }
+}
