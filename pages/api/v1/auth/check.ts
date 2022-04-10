@@ -4,20 +4,14 @@ import jwt from "jsonwebtoken";
 
 async function handler(request: NextApiRequest, response: NextApiResponse) {
   const { authorization } = request.headers;
-  if (!authorization) {
-    return response.status(401).json({
-      ok: false,
-    });
-  }
+  if (!authorization) return response.status(401).json({ ok: false });
 
-  const isValid = jwt.verify(authorization, "asdf");
-  if (isValid) {
-    return response.status(401).json({ ok: false });
-  }
+  const isValid = jwt.verify(authorization, process.env.SECRET_KEY + "");
+  console.log("isValid", isValid);
 
-  return response.status(200).json({
-    ok: true,
-  });
+  if (!isValid) return response.status(401).json({ ok: false });
+
+  return response.status(200).json({ ok: true });
 }
 
 export default apiCaller({

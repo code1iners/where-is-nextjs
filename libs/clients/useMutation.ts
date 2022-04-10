@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-interface SimpleError {
+export interface SimpleError {
   code: string;
   message: string;
 }

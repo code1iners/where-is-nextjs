@@ -1,19 +1,23 @@
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
+import { useEffect, useState } from "react";
+import useAuth from "@libs/clients/useAuth";
 
 function MyApp({ Component, pageProps, router }: AppProps) {
-  // if (typeof window !== undefined) {
-  //   (async () => {
-  //     const token = sessionStorage.getItem("ACCESS_TOKEN") + "";
-  //     const res = await fetch("/api/v1/auth/check", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Authorization: token,
-  //       },
-  //     });
-  //   })();
-  // }
+  const { checker } = useAuth();
+  const isNotPrivateUrls = ["/auth/login", "/auth/join"];
+  useEffect(() => {
+    (async () => {
+      const isNotPrivateUrl = isNotPrivateUrls.includes(router.route);
+      if (!isNotPrivateUrl) {
+        const { ok, error } = await checker();
+        if (!ok) {
+          console.error(error);
+          router.push("/auth/login");
+        }
+      }
+    })();
+  }, []);
 
   return <Component {...pageProps} />;
 }
