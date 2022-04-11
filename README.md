@@ -4,7 +4,12 @@ This is a simple geo location service application.
 
 ### Services.
 
-- #### Auth
+- #### Auth.
+
   - [x] User join.
   - [x] User login.
-  - [ ] User validation.
+  - [x] User validation.
+  - [x] Prohibited area for logged in user.
+
+- #### Geo location.
+  - [ ] Import naver map sdk.
