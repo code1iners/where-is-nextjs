@@ -6,20 +6,20 @@ import useAuth from "@libs/clients/useAuth";
 function MyApp({ Component, pageProps, router }: AppProps) {
   const [showing, setShowing] = useState(false);
   const { checker } = useAuth();
-  const isNotPrivateUrls = ["/auth/login", "/auth/join"];
+
   useEffect(() => {
     (async () => {
-      const isNotPrivateUrl = isNotPrivateUrls.includes(router.route);
-      if (!isNotPrivateUrl) {
-        const { ok, error } = await checker();
-        if (!ok) {
-          console.error(error);
-          router.replace("/auth/login");
-        }
-        setShowing(true);
+      const { ok, error } = await checker();
+      if (!ok) {
+        console.error(error);
+        router.replace("/auth/login");
       } else {
-        setShowing(true);
+        const prohibitedArea = ["/auth/join", "/auth/login"];
+        const include = prohibitedArea.includes(router.route);
+        if (include) router.replace("/");
       }
+
+      setShowing(true);
     })();
   }, []);
 
