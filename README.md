@@ -12,4 +12,4 @@ This is a simple geo location service application.
   - [x] Prohibited area for logged in user.
 
 - #### Geo location.
-  - [ ] Import naver map sdk.
+  - [x] Import naver map sdk.
