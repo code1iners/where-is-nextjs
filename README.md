@@ -13,3 +13,5 @@ This is a simple geo location service application.
 
 - #### Geo location.
   - [x] Import naver map sdk.
+  - [x] Set current location.
+  - [x] Set marker with location.
