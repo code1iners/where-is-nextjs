@@ -1,5 +1,6 @@
 import HorizontalButton from "@components/horizontal-button";
 import HorizontalDivider from "@components/horizontal-divider";
+import MobileLayout from "@components/mobile-layout";
 import useMutation from "@libs/clients/useMutation";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -64,66 +65,72 @@ export default function Login() {
   }, [ok, data, error, loading]);
 
   return (
-    <main className="m-5">
-      <form
-        className="flex flex-col space-y-5"
-        onSubmit={handleSubmit(onSubmitValid)}
-      >
-        <div className="flex flex-col">
-          <input
-            {...register("email", {
-              required: true,
-            })}
-            className="input-text"
-            type="email"
-            placeholder="Email."
-            autoComplete="off"
-            autoCapitalize="off"
-            required
-          />
-          {errors.email ? (
-            <span className="error-message text-sm">
-              {errors.email.message}
-            </span>
-          ) : null}
-        </div>
+    <MobileLayout seoTitle="로그인">
+      <article>
+        <section>
+          <form
+            className="flex flex-col space-y-5"
+            onSubmit={handleSubmit(onSubmitValid)}
+          >
+            <div className="flex flex-col">
+              <input
+                {...register("email", {
+                  required: true,
+                })}
+                className="input-text"
+                type="email"
+                placeholder="Email."
+                autoComplete="off"
+                autoCapitalize="off"
+                required
+              />
+              {errors.email ? (
+                <span className="error-message text-sm">
+                  {errors.email.message}
+                </span>
+              ) : null}
+            </div>
 
-        <div className="flex flex-col">
-          <input
-            {...register("password", {
-              required: "Password is required.",
-              minLength: {
-                value: 8,
-                message: "Password must have at least 8 digits.",
-              },
-            })}
-            className="input-text"
-            type="password"
-            placeholder="Password."
-            required
-          />
-          {errors.password ? (
-            <span className="error-message text-sm">
-              {errors.password.message}
-            </span>
-          ) : null}
-        </div>
+            <div className="flex flex-col">
+              <input
+                {...register("password", {
+                  required: "Password is required.",
+                  minLength: {
+                    value: 8,
+                    message: "Password must have at least 8 digits.",
+                  },
+                })}
+                className="input-text"
+                type="password"
+                placeholder="Password."
+                required
+              />
+              {errors.password ? (
+                <span className="error-message text-sm">
+                  {errors.password.message}
+                </span>
+              ) : null}
+            </div>
 
-        <HorizontalButton text="Login" />
-      </form>
+            <HorizontalButton text="Login" />
+          </form>
+        </section>
 
-      <HorizontalDivider margin="md" />
+        <HorizontalDivider margin="md" />
 
-      <nav className="flex justify-center">
-        <Link href={"/auth/join"}>
-          <a>
-            <span className="tracking-wider">
-              Do you need a<span className="text-purple-500 mx-1">New</span>
-              account?
-            </span>
-          </a>
-        </Link>
-      </nav>
-    </main>
+        <section>
+          <nav className="flex justify-center">
+            <Link href={"/auth/join"}>
+              <a>
+                <span className="tracking-wider">
+                  Do you need a<span className="text-purple-500 mx-1">New</span>
+                  account?
+                </span>
+              </a>
+            </Link>
+          </nav>
+        </section>
+      </article>
+    </MobileLayout>
   );
 }

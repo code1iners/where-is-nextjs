@@ -1,3 +1,4 @@
+import MobileLayout from "@components/mobile-layout";
 import useMutation from "@libs/clients/useMutation";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
@@ -35,6 +36,10 @@ const Settings: NextPage = () => {
     }
   };
 
+  const onAccountUpdateClick = () => {
+    router.push("/users/me");
+  };
+
   useEffect(() => {
     if (!logoutOk && logoutError) console.error("[settings]", logoutError);
   }, [logoutOk, logoutError]);
@@ -51,10 +56,13 @@ const Settings: NextPage = () => {
   }, [deleteOk, deleteError]);
 
   return (
-    <main>
+    <MobileLayout seoTitle="설정">
       <article>
         <section>
-          <ul className="flex flex-col p-5 text-sm tracking-wide divide-y">
+          <ul className="flex flex-col text-sm tracking-wide divide-y">
+            <li onClick={onAccountUpdateClick} className="list-item">
+              내 정보
+            </li>
             <li onClick={onLogoutClick} className="list-item">
               로그아웃
             </li>
@@ -67,7 +75,7 @@ const Settings: NextPage = () => {
           </ul>
         </section>
       </article>
-    </main>
+    </MobileLayout>
   );
 };
 
