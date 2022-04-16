@@ -14,10 +14,13 @@ const Settings: NextPage = () => {
 
   const onLogoutClick = () => {
     if (logoutLoading) return;
-    logout();
 
-    sessionStorage.removeItem("ACCESS_TOKEN");
-    router.replace("/auth/login");
+    if (window.confirm("정말로 로그아웃 하시겠습니까?")) {
+      logout();
+
+      sessionStorage.removeItem("ACCESS_TOKEN");
+      router.replace("/auth/login");
+    }
   };
 
   const onDeleteAccountClick = async () => {
@@ -47,16 +50,13 @@ const Settings: NextPage = () => {
     <main>
       <article>
         <section>
-          <ul className="p-5 space-y-2 text-sm tracking-wide">
-            <li
-              onClick={onLogoutClick}
-              className="cursor-pointer transition-all hover:text-lg"
-            >
+          <ul className="flex flex-col p-5 text-sm tracking-wide divide-y">
+            <li onClick={onLogoutClick} className="list-item">
               로그아웃
             </li>
             <li
               onClick={onDeleteAccountClick}
-              className="cursor-pointer transition-all hover:text-lg text-red-500"
+              className="list-item text-red-500"
             >
               계정 삭제
             </li>

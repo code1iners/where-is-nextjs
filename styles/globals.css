@@ -10,4 +10,8 @@
   .error-message {
     @apply text-red-400 tracking-wide mt-1;
   }
+
+  .list-item {
+    @apply p-2 cursor-pointer transition-all hover:text-lg;
+  }
 }
