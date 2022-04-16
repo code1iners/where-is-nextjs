@@ -24,6 +24,16 @@ export default function apiCaller({
       });
     }
 
+    if (isPrivate && !request.session.user) {
+      return response.status(401).json({
+        ok: false,
+        error: {
+          code: "003",
+          message: "Does not found user access token.",
+        },
+      });
+    }
+
     try {
       handler(request, response);
     } catch (error) {
