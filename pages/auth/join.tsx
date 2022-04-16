@@ -37,7 +37,7 @@ export default function Join() {
   useEffect(() => {
     if (joinOk && joinData) {
       // Set user session.
-      sessionStorage.setItem("ACCESS_TOKENS", joinData.token);
+      sessionStorage.setItem("ACCESS_TOKEN", joinData.token);
 
       router.push("/");
     } else {

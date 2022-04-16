@@ -10,7 +10,7 @@ interface useAuthResult {
 
 export default function useAuth(): useAuthResult {
   const checker = async () => {
-    const token = sessionStorage.getItem("ACCESS_TOKENS");
+    const token = sessionStorage.getItem("ACCESS_TOKEN");
     const { ok, error } = await fetch("/api/v1/auth/check", {
       method: "POST",
       headers: {

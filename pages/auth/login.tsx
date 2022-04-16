@@ -35,7 +35,7 @@ export default function Login() {
 
   useEffect(() => {
     if (ok && data) {
-      sessionStorage.setItem("ACCESS_TOKENS", data.token);
+      sessionStorage.setItem("ACCESS_TOKEN", data.token);
 
       router.push("/");
     } else {

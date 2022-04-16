@@ -12,7 +12,7 @@ function MyApp({ Component, pageProps, router }: AppProps) {
       const { ok, error } = await checker();
       if (!ok) {
         console.error(error);
-        sessionStorage.removeItem("ACCESS_TOKENS");
+        sessionStorage.removeItem("ACCESS_TOKEN");
         router.replace("/auth/login");
       } else {
         const prohibitedArea = ["/auth/join", "/auth/login"];
