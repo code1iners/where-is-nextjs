@@ -1,4 +1,3 @@
-import { sessionOptions } from "./../../../../libs/servers/withSession";
 import apiCaller from "@libs/servers/apiCaller";
 import { NextApiRequest, NextApiResponse } from "next";
 import client from "@libs/clients/client";
@@ -6,7 +5,6 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { LoginForm } from "./../../../auth/login";
 import withSession from "@libs/servers/withSession";
-import { withIronSessionApiRoute } from "iron-session/next";
 
 interface LoginRequestBody extends NextApiRequest {
   body: LoginForm;
@@ -31,10 +29,12 @@ async function authLogin(request: LoginRequestBody, response: NextApiResponse) {
         ok: false,
         error: {
           code: "002",
-          message: "The user doesn't exists.",
+          message: "Does not found the user.",
         },
       });
     }
+
+    // Check user password.
     const isPasswordValid = await bcrypt.compare(password, foundUser.password);
     if (!isPasswordValid) {
       return response.status(401).json({
@@ -46,14 +46,19 @@ async function authLogin(request: LoginRequestBody, response: NextApiResponse) {
       });
     }
 
-    const token = jwt.sign({ id: foundUser.id }, process.env.SECRET_KEY + "");
+    // Update dormant.
+    await client.user.update({
+      where: { id: foundUser.id },
+      data: { isDormant: true },
+    });
 
-    request.session.user = {
-      id: foundUser.id,
-    };
+    // Set session.
+    request.session.user = { id: foundUser.id };
     await request.session.save();
 
     // jwt.sign()
+    const token = jwt.sign({ id: foundUser.id }, process.env.SECRET_KEY + "");
+
     return response.status(200).json({
       ok: true,
       data: {

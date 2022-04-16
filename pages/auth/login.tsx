@@ -40,6 +40,7 @@ export default function Login() {
       router.push("/");
     } else {
       if (error) {
+        console.error("[login]", error);
         switch (error.code) {
           case "002":
             setError("email", {

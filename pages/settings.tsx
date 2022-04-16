@@ -5,9 +5,10 @@ import { useEffect } from "react";
 
 const Settings: NextPage = () => {
   const router = useRouter();
-  const [deleteAccount, { ok, error, loading }] = useMutation(
-    "/api/v1/auth/delete"
-  );
+  const [
+    deleteAccount,
+    { ok: deleteOk, error: deleteError, loading: deleteLoading },
+  ] = useMutation("/api/v1/auth/delete");
   const [logout, { ok: logoutOk, error: logoutError, loading: logoutLoading }] =
     useMutation("/api/v1/auth/logout");
 
@@ -20,20 +21,27 @@ const Settings: NextPage = () => {
   };
 
   const onDeleteAccountClick = async () => {
-    if (loading) return;
+    if (deleteLoading) return;
 
-    try {
-      if (window.confirm("정말로 삭제하시겠습니까?")) {
-        await deleteAccount();
-      }
-    } catch (e) {
-      console.error(e);
+    if (window.confirm("정말로 삭제하시겠습니까?")) {
+      deleteAccount();
     }
   };
 
   useEffect(() => {
     if (!logoutOk && logoutError) console.error("[settings]", logoutError);
   }, [logoutOk, logoutError]);
+
+  useEffect(() => {
+    if (deleteOk) {
+      alert("정상적으로 삭제되었습니다.");
+      sessionStorage.removeItem("ACCESS_TOKEN");
+      router.replace("/auth/login");
+    }
+    if (deleteError) {
+      console.error("[settings]", deleteError);
+    }
+  }, [deleteOk, deleteError]);
 
   return (
     <main>
