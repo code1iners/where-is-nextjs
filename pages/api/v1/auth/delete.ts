@@ -3,7 +3,7 @@ import { NextApiRequest } from "next";
 import apiCaller from "@libs/servers/apiCaller";
 import withSession from "@libs/servers/withSession";
 
-const handler = (request: NextApiRequest, response: NextApiResponse) => {
+const authDelete = (request: NextApiRequest, response: NextApiResponse) => {
   try {
     console.log(request.headers);
 
@@ -11,7 +11,7 @@ const handler = (request: NextApiRequest, response: NextApiResponse) => {
       ok: true,
     });
   } catch (e) {
-    console.error(e);
+    console.error("[authDelete]", e);
     return response.status(500).json({
       ok: false,
       error: {
@@ -25,6 +25,6 @@ const handler = (request: NextApiRequest, response: NextApiResponse) => {
 export default withSession(
   apiCaller({
     methods: ["POST"],
-    handler,
+    handler: authDelete,
   })
 );

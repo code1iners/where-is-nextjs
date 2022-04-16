@@ -16,7 +16,7 @@ export interface JoinResultData {
   token: string;
 }
 
-async function handler(request: JoinRequestBody, response: NextApiResponse) {
+async function authJoin(request: JoinRequestBody, response: NextApiResponse) {
   try {
     const {
       body: { email, username, password },
@@ -65,7 +65,7 @@ async function handler(request: JoinRequestBody, response: NextApiResponse) {
       },
     });
   } catch (error) {
-    console.error("[join]", error);
+    console.error("[authJoin]", error);
     return response.status(500).json({
       ok: false,
       error: {
@@ -78,6 +78,6 @@ async function handler(request: JoinRequestBody, response: NextApiResponse) {
 
 export default apiCaller({
   methods: ["POST"],
-  handler,
+  handler: authJoin,
   isPrivate: false,
 });

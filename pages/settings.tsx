@@ -1,31 +1,40 @@
 import useMutation from "@libs/clients/useMutation";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { useSWRConfig } from "swr";
+import { useEffect } from "react";
 
 const Settings: NextPage = () => {
   const router = useRouter();
   const [deleteAccount, { ok, error, loading }] = useMutation(
     "/api/v1/auth/delete"
   );
+  const [logout, { ok: logoutOk, error: logoutError, loading: logoutLoading }] =
+    useMutation("/api/v1/auth/logout");
 
   const onLogoutClick = () => {
+    if (logoutLoading) return;
+    logout();
+
     sessionStorage.removeItem("ACCESS_TOKEN");
     router.reload();
   };
 
   const onDeleteAccountClick = async () => {
-    console.log("onDeleteAccountClick", loading);
     if (loading) return;
 
     try {
-      if (window.confirm()) {
-        await deleteAccount({});
+      if (window.confirm("정말로 삭제하시겠습니까?")) {
+        await deleteAccount();
       }
     } catch (e) {
       console.error(e);
     }
   };
+
+  useEffect(() => {
+    if (!logoutOk) console.error(logoutError);
+  }, [logoutOk, logoutError]);
+
   return (
     <main>
       <article>
@@ -35,13 +44,13 @@ const Settings: NextPage = () => {
               onClick={onLogoutClick}
               className="cursor-pointer transition-all hover:text-lg"
             >
-              Logout
+              로그아웃
             </li>
             <li
               onClick={onDeleteAccountClick}
               className="cursor-pointer transition-all hover:text-lg text-red-500"
             >
-              Delete account
+              계정 삭제
             </li>
           </ul>
         </section>

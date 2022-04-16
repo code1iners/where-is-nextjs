@@ -13,7 +13,7 @@ interface useMutationState<T> {
 }
 
 type useMutationResult<T> = [
-  (data: any, headers?: any) => void,
+  (data?: any, headers?: any) => void,
   useMutationState<T>
 ];
 
@@ -27,15 +27,17 @@ export default function useMutation<T = any>(
     error: undefined,
   });
 
-  function mutation(data: any, headers?: any) {
+  function mutation(data?: any, headers?: any) {
+    const authorization = sessionStorage.getItem("ACCESS_TOKEN") || "";
     setState((p) => ({ ...p, loading: true }));
     fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        ...(authorization && { authorization }),
         ...headers,
       },
-      body: JSON.stringify(data),
+      ...(data && { body: JSON.stringify(data) }),
     })
       .then(async (res) => res.json())
       .then(({ ok, data, error }) =>

@@ -17,7 +17,7 @@ export interface LoginResultData {
   token: string;
 }
 
-async function handler(request: LoginRequestBody, response: NextApiResponse) {
+async function authLogin(request: LoginRequestBody, response: NextApiResponse) {
   try {
     const { email, password } = request.body;
 
@@ -61,7 +61,7 @@ async function handler(request: LoginRequestBody, response: NextApiResponse) {
       },
     });
   } catch (e) {
-    console.error("[login]", e);
+    console.error("[authLogin]", e);
     return response.status(500).json({
       ok: false,
       error: {
@@ -75,7 +75,7 @@ async function handler(request: LoginRequestBody, response: NextApiResponse) {
 export default withSession(
   apiCaller({
     methods: ["POST"],
-    handler,
+    handler: authLogin,
     isPrivate: false,
   })
 );

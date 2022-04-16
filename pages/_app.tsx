@@ -4,25 +4,30 @@ import { useEffect, useState } from "react";
 import useAuth from "@libs/clients/useAuth";
 import { SWRConfig } from "swr";
 
+const noCheckUrls = ["/auth/login", "/auth/join"];
+
 function MyApp({ Component, pageProps, router }: AppProps) {
   const [showing, setShowing] = useState(false);
   const { checker } = useAuth();
 
-  useEffect(() => {
-    (async () => {
+  const checkUserAuthorization = async () => {
+    const needCheck = noCheckUrls.every(
+      (url) => !router.pathname.includes(url)
+    );
+    if (needCheck) {
       const { ok, error } = await checker();
       if (!ok) {
-        console.error(error);
+        console.error("_app", error);
         sessionStorage.removeItem("ACCESS_TOKEN");
         router.replace("/auth/login");
-      } else {
-        const prohibitedArea = ["/auth/join", "/auth/login"];
-        const include = prohibitedArea.includes(router.route);
-        if (include) router.replace("/");
       }
+    }
 
-      setShowing(true);
-    })();
+    setShowing(true);
+  };
+
+  useEffect(() => {
+    checkUserAuthorization();
   }, []);
 
   return showing ? (
