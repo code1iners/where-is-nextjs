@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { JoinResultData } from "pages/api/v1/auth/join";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import HorizontalDivider from "../../components/HorizontalDivider";
+import HorizontalDivider from "../../components/horizontal-divider";
 import useMutation from "../../libs/clients/useMutation";
 
 export interface JoinForm {

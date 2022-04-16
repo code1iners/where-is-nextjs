@@ -1,5 +1,5 @@
-import HorizontalButton from "@components/HorizontalButton";
-import HorizontalDivider from "@components/HorizontalDivider";
+import HorizontalButton from "@components/horizontal-button";
+import HorizontalDivider from "@components/horizontal-divider";
 import useMutation from "@libs/clients/useMutation";
 import Link from "next/link";
 import { useRouter } from "next/router";
