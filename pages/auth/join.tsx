@@ -38,11 +38,12 @@ export default function Join() {
     if (joinOk && joinData) {
       // Set user session.
       sessionStorage.setItem("ACCESS_TOKEN", joinData.token);
-
       router.push("/");
     } else {
       // Error toast.
-      console.error(joinError);
+      if (joinError) {
+        console.error("[join]", joinError);
+      }
     }
   }, [joinOk, joinData, joinError, joinLoading]);
 

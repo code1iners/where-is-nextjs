@@ -3,10 +3,10 @@ import { NextApiResponse } from "next";
 import { NextApiRequest } from "next";
 import apiCaller from "@libs/servers/apiCaller";
 
-const handler = (request: NextApiRequest, response: NextApiResponse) => {
+const authMe = (request: NextApiRequest, response: NextApiResponse) => {
   try {
   } catch (e) {
-    console.error(e);
+    console.error("[authMe]", e);
     return response.status(500).json({
       ok: false,
       error: {
@@ -20,6 +20,6 @@ const handler = (request: NextApiRequest, response: NextApiResponse) => {
 export default withSession(
   apiCaller({
     methods: ["GET"],
-    handler,
+    handler: authMe,
   })
 );
