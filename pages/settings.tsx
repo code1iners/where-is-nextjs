@@ -26,7 +26,11 @@ const Settings: NextPage = () => {
   const onDeleteAccountClick = async () => {
     if (deleteLoading) return;
 
-    if (window.confirm("정말로 삭제하시겠습니까?")) {
+    if (
+      window.confirm(
+        "정말로 계정을 삭제하시겠습니까?\n삭제된 정보는 더 이상 되돌릴 수 없습니다."
+      )
+    ) {
       deleteAccount();
     }
   };
