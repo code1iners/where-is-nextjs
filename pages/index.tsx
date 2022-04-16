@@ -8,24 +8,23 @@ const Home: NextPage = () => {
   const { createCenter, setCurrentPosition, createMarker } = useNaverMap();
 
   useEffect(() => {
-    navigator.geolocation.getCurrentPosition(({ coords }) => {
-      const center = createCenter(coords.latitude, coords.longitude);
-      const map = setCurrentPosition({
-        center,
-        zoom: 17,
-      });
-
-      var marker = createMarker({
-        map,
-        position: center.destinationPoint(90, 15),
-        icon: {
-          url: "IMAGE",
-          size: new naver.maps.Size(50, 52),
-          origin: new naver.maps.Point(0, 0),
-          anchor: new naver.maps.Point(25, 26),
-        },
-      });
-    });
+    // navigator.geolocation.getCurrentPosition(({ coords }) => {
+    //   const center = createCenter(coords.latitude, coords.longitude);
+    //   const map = setCurrentPosition({
+    //     center,
+    //     zoom: 17,
+    //   });
+    //   var marker = createMarker({
+    //     map,
+    //     position: center.destinationPoint(90, 15),
+    //     icon: {
+    //       url: "IMAGE",
+    //       size: new naver.maps.Size(50, 52),
+    //       origin: new naver.maps.Point(0, 0),
+    //       anchor: new naver.maps.Point(25, 26),
+    //     },
+    //   });
+    // });
   }, []);
 
   return (
