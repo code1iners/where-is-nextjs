@@ -1,3 +1,4 @@
+import withSession from "@libs/servers/withSession";
 import { NextApiResponse } from "next";
 import { NextApiRequest } from "next";
 import apiCaller from "@libs/servers/apiCaller";
@@ -5,8 +6,7 @@ import apiCaller from "@libs/servers/apiCaller";
 async function authLogout(request: NextApiRequest, response: NextApiResponse) {
   try {
     // Clear user session.
-    request.session.destroy();
-
+    request.session?.destroy();
     return response.status(200).json({ ok: true });
   } catch (e) {
     console.error("[authLogout]", e);
@@ -20,7 +20,9 @@ async function authLogout(request: NextApiRequest, response: NextApiResponse) {
   }
 }
 
-export default apiCaller({
-  methods: ["POST"],
-  handler: authLogout,
-});
+export default withSession(
+  apiCaller({
+    methods: ["POST"],
+    handler: authLogout,
+  })
+);

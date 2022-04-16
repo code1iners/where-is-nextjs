@@ -16,7 +16,7 @@ const Settings: NextPage = () => {
     logout();
 
     sessionStorage.removeItem("ACCESS_TOKEN");
-    router.reload();
+    router.replace("/auth/login");
   };
 
   const onDeleteAccountClick = async () => {
@@ -32,7 +32,7 @@ const Settings: NextPage = () => {
   };
 
   useEffect(() => {
-    if (!logoutOk) console.error(logoutError);
+    if (!logoutOk && logoutError) console.error("[settings]", logoutError);
   }, [logoutOk, logoutError]);
 
   return (

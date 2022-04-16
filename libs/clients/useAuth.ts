@@ -21,7 +21,7 @@ export default function useAuth(): useAuthResult {
     })
       .then((res) => res.json())
       .catch((error) => {
-        console.error(error);
+        console.error("[checker]", error);
         return { ok: false };
       });
 
