@@ -12,7 +12,10 @@ interface useMutationState<T> {
   error?: SimpleError;
 }
 
-type useMutationResult<T> = [(data: any) => void, useMutationState<T>];
+type useMutationResult<T> = [
+  (data: any, headers?: any) => void,
+  useMutationState<T>
+];
 
 export default function useMutation<T = any>(
   url: string
@@ -24,12 +27,13 @@ export default function useMutation<T = any>(
     error: undefined,
   });
 
-  function mutation(data: any) {
+  function mutation(data: any, headers?: any) {
     setState((p) => ({ ...p, loading: true }));
     fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        ...headers,
       },
       body: JSON.stringify(data),
     })

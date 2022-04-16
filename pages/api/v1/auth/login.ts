@@ -1,9 +1,12 @@
+import { sessionOptions } from "./../../../../libs/servers/withSession";
 import apiCaller from "@libs/servers/apiCaller";
 import { NextApiRequest, NextApiResponse } from "next";
 import client from "@libs/clients/client";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { LoginForm } from "./../../../auth/login";
+import withSession from "@libs/servers/withSession";
+import { withIronSessionApiRoute } from "iron-session/next";
 
 interface LoginRequestBody extends NextApiRequest {
   body: LoginForm;
@@ -45,6 +48,11 @@ async function handler(request: LoginRequestBody, response: NextApiResponse) {
 
     const token = jwt.sign({ id: foundUser.id }, process.env.SECRET_KEY + "");
 
+    request.session.user = {
+      id: foundUser.id,
+    };
+    await request.session.save();
+
     // jwt.sign()
     return response.status(200).json({
       ok: true,
@@ -64,8 +72,10 @@ async function handler(request: LoginRequestBody, response: NextApiResponse) {
   }
 }
 
-export default apiCaller({
-  methods: ["POST"],
-  handler,
-  isPrivate: false,
-});
+export default withSession(
+  apiCaller({
+    methods: ["POST"],
+    handler,
+    isPrivate: false,
+  })
+);

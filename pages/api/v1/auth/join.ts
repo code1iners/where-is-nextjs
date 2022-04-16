@@ -1,7 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { setCookies } from "cookies-next";
 import client from "@libs/clients/client";
 import apiCaller from "@libs/servers/apiCaller";
 import { JoinForm } from "../../../auth/join";
