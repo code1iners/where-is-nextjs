@@ -12,7 +12,7 @@ type User = {
   avatar: string;
   gender: "MALE" | "FEMALE" | null;
 };
-interface UserMeResult {
+export interface UserMeResult {
   ok: boolean;
   me: User;
 }
@@ -21,15 +21,9 @@ export default function Me() {
   const { data, error } = useSWR<UserMeResult>("/api/v1/users/me");
 
   useEffect(() => {
-    // Has data?
-    if (data && data.ok) {
-      const { name } = data.me;
-      console.log(name);
-    }
-
     // Has error?
     if (error) console.error("[me]", error);
-  }, [data, error]);
+  }, [error]);
 
   return (
     <MobileLayout seoTitle="내 정보">
@@ -42,7 +36,7 @@ export default function Me() {
 
               <div className="flex items-center gap-2 mt-1">
                 <h1 className="text-xl tracking-wider">{data.me.name}</h1>
-                <Link href={"/users/modify"}>
+                <Link href={"/users/me/modify"}>
                   <a>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -62,11 +56,11 @@ export default function Me() {
                 </Link>
               </div>
 
-              <span className="text-gray-400 tracking-wide text-sm">
+              <span className="text-gray-400 tracking-wide text-sm cursor-default">
                 {data.me.email}
               </span>
 
-              <div className="grid grid-cols-2 gap-2 mt-5 text-xs text-gray-500 tracking-wider">
+              <div className="grid grid-cols-2 gap-2 mt-5 text-xs text-gray-500 tracking-wider cursor-default">
                 <span>
                   Phone: {data.me.phone ? data.me.phone : "정보 없음"}
                 </span>
