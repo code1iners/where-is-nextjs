@@ -32,7 +32,7 @@ export default function Join() {
     getValues("password") === confirmPasswordValue;
 
   const onSubmitValid = (form: JoinForm) => {
-    if (!joinLoading) join(form);
+    if (!joinLoading) join({ data: form });
   };
 
   useEffect(() => {

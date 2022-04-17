@@ -19,8 +19,12 @@ interface useMutationProps {
   method?: httpMethod;
 }
 
+const defaultMutationProps = {
+  method: "POST",
+};
+
 type useMutationResult<T> = [
-  (props: useMutationProps) => void,
+  (props?: useMutationProps) => void,
   useMutationState<T>
 ];
 
@@ -34,17 +38,19 @@ export default function useMutation<T = any>(
     error: undefined,
   });
 
-  function mutation({ data, headers, method = "POST" }: useMutationProps) {
+  function mutation(props?: useMutationProps) {
     const authorization = sessionStorage.getItem("ACCESS_TOKEN") || "";
+    const options = { ...defaultMutationProps, ...props };
+
     setState((p) => ({ ...p, loading: true }));
     fetch(url, {
-      method,
+      method: options.method,
       headers: {
         "Content-Type": "application/json",
         ...(authorization && { authorization }),
-        ...headers,
+        ...options?.headers,
       },
-      ...(data && { body: JSON.stringify(data) }),
+      ...(options?.data && { body: JSON.stringify(options.data) }),
     })
       .then(async (res) => res.json())
       .then(({ ok, data, error }) =>

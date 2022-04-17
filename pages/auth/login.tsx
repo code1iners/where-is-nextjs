@@ -30,7 +30,9 @@ export default function Login() {
   const onSubmitValid = (form: LoginForm) => {
     if (!loading) {
       clearErrors();
-      login(form);
+      login({
+        data: form,
+      });
     }
   };
 

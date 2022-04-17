@@ -17,18 +17,10 @@ interface UserModifyForm {
 
 export default function Modify() {
   const { data, error, mutate } = useSWR<UserMeResult>("/api/v1/users/me");
-  const { handleSubmit, register, setValue, getValues } =
-    useForm<UserModifyForm>();
+  const { handleSubmit, register, setValue } = useForm<UserModifyForm>();
   const { objectComparator } = useDiff();
-  const [
-    modify,
-    {
-      ok: modifyOk,
-      error: modifyError,
-      loading: modifyLoading,
-      data: modifyData,
-    },
-  ] = useMutation("/api/v1/users/me/modify");
+  const [modify, { ok: modifyOk, error: modifyError, loading: modifyLoading }] =
+    useMutation("/api/v1/users/me/modify");
 
   const isValid = (form: UserModifyForm) => {
     // Is loading?

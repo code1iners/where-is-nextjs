@@ -1,7 +1,6 @@
 import MobileLayout from "@components/mobile-layout";
 import { useEffect } from "react";
 import useSWR from "swr";
-import Image from "next/image";
 import Link from "next/link";
 
 type User = {
