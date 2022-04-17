@@ -11,7 +11,7 @@ const useDiff = () => {
 
     // Compare difference of object.
     const keys = Object.keys(objectA);
-    return keys.reduce((accumulated, key) => {
+    const result = keys.reduce((accumulated, key) => {
       const isNotSame = objectA[key] !== objectB[key];
       const isNotEmptyStringA = objectA[key] !== "";
       const isNotEmptyStringB = objectB[key] !== "";
@@ -22,6 +22,7 @@ const useDiff = () => {
           isNotEmptyStringB && { [key]: objectB[key] || objectA[key] }),
       };
     }, {});
+    return Object.keys(result).length ? result : null;
   }
 
   return {

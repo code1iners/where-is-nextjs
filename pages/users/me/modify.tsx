@@ -1,6 +1,7 @@
 import HorizontalButton from "@components/horizontal-button";
 import MobileLayout from "@components/mobile-layout";
 import useDiff from "@libs/clients/useDiff";
+import useMutation from "@libs/clients/useMutation";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import useSWR from "swr";
@@ -15,21 +16,35 @@ interface UserModifyForm {
 }
 
 export default function Modify() {
-  const { data, error } = useSWR<UserMeResult>("/api/v1/users/me");
-  const { handleSubmit, register, setValue } = useForm<UserModifyForm>();
+  const { data, error, mutate } = useSWR<UserMeResult>("/api/v1/users/me");
+  const { handleSubmit, register, setValue, getValues } =
+    useForm<UserModifyForm>();
   const { objectComparator } = useDiff();
+  const [
+    modify,
+    {
+      ok: modifyOk,
+      error: modifyError,
+      loading: modifyLoading,
+      data: modifyData,
+    },
+  ] = useMutation("/api/v1/users/me/modify");
 
   const isValid = (form: UserModifyForm) => {
+    // Is loading?
+    if (modifyLoading) return;
+
     const originData: any = { ...data?.me };
     delete originData.id;
     const newData: any = { ...form };
 
     const result: UserModifyForm = objectComparator(originData, newData);
-    console.log(result);
+
+    if (result) modify({ data: result, method: "PATCH" });
   };
 
   useEffect(() => {
-    if (data) {
+    if (data && data.me) {
       setValue("email", data.me.email);
       setValue("name", data.me.name);
       setValue("phone", data.me.phone);
@@ -38,6 +53,14 @@ export default function Modify() {
     }
     if (error) console.error("[modify]", error);
   }, [data, error]);
+
+  useEffect(() => {
+    if (modifyOk && !modifyLoading) {
+      alert("정상적으로 저장되었습니다.");
+    }
+    if (modifyError) console.error("[modify]", modifyError);
+    mutate();
+  }, [modifyOk, modifyError, modifyLoading]);
 
   return (
     <MobileLayout seoTitle="">

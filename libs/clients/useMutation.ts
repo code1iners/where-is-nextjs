@@ -1,3 +1,4 @@
+import { httpMethod } from "./../servers/apiCaller";
 import { useState } from "react";
 
 export interface SimpleError {
@@ -12,8 +13,14 @@ interface useMutationState<T> {
   error?: SimpleError;
 }
 
+interface useMutationProps {
+  data: any;
+  headers?: any;
+  method?: httpMethod;
+}
+
 type useMutationResult<T> = [
-  (data?: any, headers?: any) => void,
+  (props: useMutationProps) => void,
   useMutationState<T>
 ];
 
@@ -27,11 +34,11 @@ export default function useMutation<T = any>(
     error: undefined,
   });
 
-  function mutation(data?: any, headers?: any) {
+  function mutation({ data, headers, method = "POST" }: useMutationProps) {
     const authorization = sessionStorage.getItem("ACCESS_TOKEN") || "";
     setState((p) => ({ ...p, loading: true }));
     fetch(url, {
-      method: "POST",
+      method,
       headers: {
         "Content-Type": "application/json",
         ...(authorization && { authorization }),

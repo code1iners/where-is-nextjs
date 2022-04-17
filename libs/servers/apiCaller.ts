@@ -1,9 +1,9 @@
 import { NextApiResponse } from "next";
 import { NextApiRequest } from "next";
-type method = "GET" | "POST" | "DELETE" | "PATCH" | "PUT";
+export type httpMethod = "GET" | "POST" | "DELETE" | "PATCH" | "PUT";
 
 interface CallerProps {
-  methods: method[];
+  methods: httpMethod[];
   handler: (request: NextApiRequest, response: NextApiResponse) => void;
   isPrivate?: boolean;
 }
@@ -19,7 +19,7 @@ export default function apiCaller({
         ok: false,
         error: {
           code: "002",
-          message: "The http method not allowed.",
+          message: "The http method is not allowed.",
         },
       });
     }
