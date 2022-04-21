@@ -2,6 +2,9 @@ import MobileLayout from "@components/mobile-layout";
 import { useEffect } from "react";
 import useSWR from "swr";
 import Link from "next/link";
+import Image from "next/image";
+import EmptyAvatar from "@components/empty-avatar";
+import useCloudflare from "@libs/clients/useCloudflare";
 
 type User = {
   id: number;
@@ -18,6 +21,7 @@ export interface UserMeResult {
 
 export default function Me() {
   const { data, error } = useSWR<UserMeResult>("/api/v1/users/me");
+  const { createImageUrl } = useCloudflare();
 
   useEffect(() => {
     // Has error?
@@ -31,7 +35,22 @@ export default function Me() {
           <>
             {/* Avatar. */}
             <section className="flex flex-col justify-center items-center mb-5">
-              <div className="w-[120px] h-[120px] bg-purple-500 rounded-full"></div>
+              {data.me.avatar ? (
+                <div className="rounded-full overflow-hidden hover:scale-105 transition flex justify-center items-center">
+                  <Image
+                    className="object-cover"
+                    src={createImageUrl({
+                      imageId: data.me.avatar,
+                      variant: "avatar",
+                    })}
+                    width={120}
+                    height={120}
+                    alt="Avatar"
+                  />
+                </div>
+              ) : (
+                <EmptyAvatar name={data.me.name} />
+              )}
 
               <div className="flex items-center gap-2 mt-1">
                 <h1 className="text-xl tracking-wider">{data.me.name}</h1>

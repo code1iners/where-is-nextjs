@@ -8,6 +8,8 @@ import { useForm } from "react-hook-form";
 import useSWR from "swr";
 import { UserMeResult } from ".";
 import useRandom from "@libs/clients/useRandom";
+import useCloudflare from "@libs/clients/useCloudflare";
+import EmptyAvatar from "@components/empty-avatar";
 
 interface UserModifyForm {
   email: string;
@@ -25,6 +27,7 @@ export default function Modify() {
   const [modify, { ok: modifyOk, error: modifyError, loading: modifyLoading }] =
     useMutation("/api/v1/users/me/modify");
   const { createRandomString } = useRandom();
+  const { createImageUrl } = useCloudflare();
 
   const isValid = async (form: UserModifyForm) => {
     // Is loading?
@@ -118,17 +121,16 @@ export default function Modify() {
                   ) : data.me.avatar ? (
                     <Image
                       className="cursor-pointer rounded-full object-cover"
-                      src={`https://imagedelivery.net/_YZKPw51blNYrdvZChBC7w/${data?.me.avatar}/avatar`}
+                      src={createImageUrl({
+                        imageId: data.me.avatar,
+                        variant: "avatar",
+                      })}
                       width={120}
                       height={120}
                       alt="Avatar"
                     />
                   ) : (
-                    <div className="flex justify-center items-center w-[120px] h-[120px] rounded-full bg-purple-400 hover:bg-purple-500 cursor-pointer">
-                      <span className="text-6xl font-bold">
-                        {data.me.name[0].toUpperCase()}
-                      </span>
-                    </div>
+                    <EmptyAvatar name={data.me.name} />
                   )}
 
                   <input
