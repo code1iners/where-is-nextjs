@@ -1,28 +1,32 @@
 import HorizontalButton from "@components/horizontal-button";
 import MobileLayout from "@components/mobile-layout";
+import Image from "next/image";
 import useDiff from "@libs/clients/useDiff";
 import useMutation from "@libs/clients/useMutation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import useSWR from "swr";
 import { UserMeResult } from ".";
+import useRandom from "@libs/clients/useRandom";
 
 interface UserModifyForm {
   email: string;
   name: string;
   phone?: string;
   gender: "MALE" | "FEMALE" | null;
+  avatarPreview?: FileList;
   avatar?: string;
 }
 
 export default function Modify() {
   const { data, error, mutate } = useSWR<UserMeResult>("/api/v1/users/me");
-  const { handleSubmit, register, setValue } = useForm<UserModifyForm>();
+  const { handleSubmit, register, setValue, watch } = useForm<UserModifyForm>();
   const { objectComparator } = useDiff();
   const [modify, { ok: modifyOk, error: modifyError, loading: modifyLoading }] =
     useMutation("/api/v1/users/me/modify");
+  const { createRandomString } = useRandom();
 
-  const isValid = (form: UserModifyForm) => {
+  const isValid = async (form: UserModifyForm) => {
     // Is loading?
     if (modifyLoading) return;
 
@@ -30,9 +34,37 @@ export default function Modify() {
     delete originData.id;
     const newData: any = { ...form };
 
+    // Image process.
+    // Getting cloudflare images upload direct url.
+    if (avatarPreview) {
+      const { ok: hasUploadUrl, result: uploadUrl } = await fetch(
+        "/api/v1/cloudflares/images/urls"
+      ).then((res) => res.json());
+      if (hasUploadUrl && avatar?.length && data) {
+        const file = avatar[0] as File;
+
+        const form = new FormData();
+        form.append(
+          "file",
+          file,
+          `/where-is/users/${data.me.id}/avatars/${createRandomString()}-${
+            file.name
+          }`
+        );
+
+        const { result: uploadedResult } = await fetch(uploadUrl?.uploadURL, {
+          method: "POST",
+          body: form,
+        }).then((res) => res.json());
+
+        newData["avatar"] = uploadedResult?.id;
+      }
+    }
+
     const result: UserModifyForm = objectComparator(originData, newData);
 
     if (result) modify({ data: result, method: "PATCH" });
+    else alert("There is no change.");
   };
 
   useEffect(() => {
@@ -54,6 +86,15 @@ export default function Modify() {
     mutate();
   }, [modifyOk, modifyError, modifyLoading]);
 
+  const avatar = watch("avatarPreview");
+  const [avatarPreview, setAvatarPreview] = useState("");
+  useEffect(() => {
+    if (avatar?.length) {
+      const file = avatar[0];
+      setAvatarPreview(URL.createObjectURL(file));
+    }
+  }, [avatar]);
+
   return (
     <MobileLayout seoTitle="">
       <article>
@@ -64,9 +105,40 @@ export default function Modify() {
               className="flex flex-col gap-3"
             >
               {/* Avatar */}
-              <label>
-                <input {...register("avatar")} type="file" />
-              </label>
+              <div className="flex justify-center items-center p-5">
+                <label>
+                  {avatarPreview ? (
+                    <Image
+                      className="cursor-pointer rounded-full object-cover"
+                      src={avatarPreview}
+                      width={120}
+                      height={120}
+                      alt="Avatar"
+                    />
+                  ) : data.me.avatar ? (
+                    <Image
+                      className="cursor-pointer rounded-full object-cover"
+                      src={`https://imagedelivery.net/_YZKPw51blNYrdvZChBC7w/${data?.me.avatar}/avatar`}
+                      width={120}
+                      height={120}
+                      alt="Avatar"
+                    />
+                  ) : (
+                    <div className="flex justify-center items-center w-[120px] h-[120px] rounded-full bg-purple-400 hover:bg-purple-500 cursor-pointer">
+                      <span className="text-6xl font-bold">
+                        {data.me.name[0].toUpperCase()}
+                      </span>
+                    </div>
+                  )}
+
+                  <input
+                    {...register("avatarPreview")}
+                    accept="image/*"
+                    type="file"
+                    className="hidden"
+                  />
+                </label>
+              </div>
 
               {/* Email */}
               <div className="flex items-center gap-2">

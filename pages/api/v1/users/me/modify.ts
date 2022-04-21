@@ -31,6 +31,7 @@ const usersModify = async (
         name: request.body?.name,
         phone: request.body?.phone,
         gender: request.body?.gender,
+        avatar: request.body?.avatar,
       },
     });
 
