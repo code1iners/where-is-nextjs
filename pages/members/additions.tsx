@@ -2,20 +2,34 @@ import { NextPage } from "next";
 import MobileLayout from "@components/mobile-layout";
 import HorizontalDivider from "@components/horizontal-divider";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { User } from "@prisma/client";
 import EmptyAvatar from "@components/empty-avatar";
 import UserAvatar from "@components/user-avatar";
 import LoadingTextWavy from "@components/loading-text-wavy";
+import useMutation from "@libs/clients/useMutation";
 
 interface MemberSearchForm {
   memberName: string;
 }
 
+interface Member extends User {
+  isFollowed: boolean;
+}
+
 const Additions: NextPage = () => {
-  const { register, handleSubmit } = useForm<MemberSearchForm>();
-  const [foundUsers, setFoundUsers] = useState<User[]>([]);
+  const { register, handleSubmit, getValues } = useForm<MemberSearchForm>();
+  const [foundMembers, setFoundMembers] = useState<Member[]>([]);
   const [isSearchLoading, setIsSearchLoading] = useState(false);
+  const [
+    membership,
+    {
+      ok: membershipOk,
+      data: membershipData,
+      error: membershipError,
+      loading: membershipLoading,
+    },
+  ] = useMutation("/api/v1/users/followings");
 
   const isFormValid = async ({ memberName }: MemberSearchForm) => {
     // Is loading?
@@ -27,13 +41,43 @@ const Additions: NextPage = () => {
         `/api/v1/users/search?name=${memberName}`
       ).then((res) => res.json());
       if (!ok) return console.error("[isFormValid]", error);
-      setFoundUsers(users);
+
+      setFoundMembers(users);
     } catch (e) {
       console.error("[isFormValid]", e);
     } finally {
       setIsSearchLoading((previous) => !previous);
     }
   };
+
+  const onFollowingClick = (id: number) => {
+    if (membershipLoading) return;
+    membership({ data: { id } });
+    try {
+    } catch (e) {
+      console.error("[onFollowingClick]", e);
+    }
+  };
+
+  useEffect(() => {
+    if (membershipOk && membershipData) {
+      const {
+        isFollowing,
+        targetUser: { id },
+      } = membershipData;
+      setFoundMembers((previous) => {
+        const foundMemberIndex = previous.findIndex(
+          (member) => member.id === id
+        );
+        previous[foundMemberIndex].isFollowed = isFollowing;
+        return [...previous];
+      });
+    }
+
+    if (membershipError) {
+      console.error(membershipError);
+    }
+  }, [membershipOk, membershipData, membershipError]);
 
   return (
     <MobileLayout seoTitle="Member additions">
@@ -78,13 +122,13 @@ const Additions: NextPage = () => {
       <HorizontalDivider margin="sm" />
 
       <article>
-        <section>
+        <section className="flex flex-col gap-3 divide-y">
           {isSearchLoading ? (
             <LoadingTextWavy />
-          ) : (
-            foundUsers.map((member) => (
+          ) : foundMembers.length ? (
+            foundMembers.map((member) => (
               <div
-                className="flex justify-between items-center"
+                className="flex justify-between items-center pt-1"
                 key={member.id}
               >
                 <div className="flex items-center gap-3">
@@ -110,24 +154,45 @@ const Additions: NextPage = () => {
                   </div>
                 </div>
                 {/* Add member button */}
-                <button>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-7 w-7 border border-purple-500 p-1 rounded-md hover:bg-purple-500 hover:text-white transition"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
-                    />
-                  </svg>
+                <button onClick={() => onFollowingClick(member.id)}>
+                  {member.isFollowed ? (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-7 w-7 border border-purple-500 p-1 rounded-md hover:bg-purple-500 hover:text-white transition"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M13 7a4 4 0 11-8 0 4 4 0 018 0zM9 14a6 6 0 00-6 6v1h12v-1a6 6 0 00-6-6zM21 12h-6"
+                      />
+                    </svg>
+                  ) : (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-7 w-7 border border-purple-500 p-1 rounded-md hover:bg-purple-500 hover:text-white transition"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
+                      />
+                    </svg>
+                  )}
                 </button>
               </div>
             ))
+          ) : (
+            <span className="flex justify-center m-20 text-gray-400 tracking-widest text-sm cursor-default whitespace-nowrap hover:scale-105 transition">
+              Try find member to follow.
+            </span>
           )}
         </section>
       </article>

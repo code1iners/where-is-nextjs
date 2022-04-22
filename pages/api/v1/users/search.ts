@@ -15,11 +15,31 @@ const usersSearch = async (
   try {
     const { name }: UserSearchQueries = request.query;
     const foundUsers = await client.user.findMany({
-      where: { name: { startsWith: name } },
+      where: {
+        name: { startsWith: name },
+        NOT: { id: request.session.user?.id },
+      },
+      include: { followed: true },
     });
+
+    const parsedUser = foundUsers.map(
+      ({ id, avatar, name, email, followed }) => {
+        const isFollowed = followed.some(
+          (followedUser) => followedUser.id === request.session.user?.id
+        );
+        return {
+          id,
+          avatar,
+          name,
+          email,
+          isFollowed,
+        };
+      }
+    );
+
     return response.status(200).json({
       ok: true,
-      users: foundUsers || [],
+      users: parsedUser || [],
     });
   } catch (e) {
     console.error("[usersSearch]", e);

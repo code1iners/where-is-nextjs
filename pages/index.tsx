@@ -68,7 +68,7 @@ const Home: NextPage = () => {
         </Link>
 
         <ul className="absolute left-3 bottom-3">
-          <Link href={"/friends/additions"}>
+          <Link href={"/members/additions"}>
             <a>
               <li className="p-2 bg-white rounded-full">
                 <svg
