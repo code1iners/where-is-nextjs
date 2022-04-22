@@ -11,9 +11,15 @@ This is a simple geo location service application.
   - [x] User validation.
   - [x] Prohibited area for logged in user.
   - [x] User logout.
-  - [ ] Delete user account.
+  - [x] Delete user account.
 
 - #### Geo location.
+
   - [x] Import naver map sdk.
   - [x] Set current location.
   - [x] Set marker with location.
+
+- #### User.
+  - [x] Update user's profile.
+  - [ ] Add following & followed.
+  - [ ] Remove following & followed.
