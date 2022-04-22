@@ -19,7 +19,11 @@ This is a simple geo location service application.
   - [x] Set current location.
   - [x] Set marker with location.
 
-- #### User.
+- #### Users.
+
   - [x] Update user's profile.
-  - [ ] Add following & followed.
-  - [ ] Remove following & followed.
+
+- #### Members.
+  - [x] Add following & followed.
+  - [x] Remove following & followed.
+  - [ ] Listing following members.

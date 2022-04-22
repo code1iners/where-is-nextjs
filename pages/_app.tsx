@@ -11,15 +11,16 @@ function MyApp({ Component, pageProps, router }: AppProps) {
   const { checker } = useAuth();
 
   const checkUserAuthorization = async () => {
-    const needCheck = noCheckUrls.every(
-      (url) => !router.pathname.includes(url)
-    );
+    const needCheck = noCheckUrls.some((url) => !router.pathname.includes(url));
     if (needCheck) {
       const { ok, error } = await checker();
+
       if (!ok) {
         console.error("_app", error);
         sessionStorage.removeItem("ACCESS_TOKEN");
         router.replace("/auth/login");
+      } else {
+        router.replace("/");
       }
     }
 
