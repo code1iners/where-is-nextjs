@@ -1,5 +1,6 @@
 import EmptyAvatar from "@components/empty-avatar";
 import UserAvatar from "@components/user-avatar";
+import useMutation from "@libs/clients/useMutation";
 import useNaverMap from "@libs/clients/useNaverMap";
 import type { NextPage } from "next";
 import Head from "next/head";
@@ -11,30 +12,63 @@ import { UserMeResult } from "./users/me";
 const Home: NextPage = () => {
   const { createCenter, setCurrentPosition, createMarker } = useNaverMap();
   const { data } = useSWR<UserMeResult>("/api/v1/users/me");
+  const [
+    updateCoords,
+    {
+      ok: updateCoordsOk,
+      error: updateCoordsError,
+      loading: updateCoordsLoading,
+    },
+  ] = useMutation("/api/v1/users/me/modify");
 
   useEffect(() => {
-    // navigator.geolocation.getCurrentPosition(({ coords }) => {
-    //   const center = createCenter(coords.latitude, coords.longitude);
-    //   const map = setCurrentPosition({
-    //     center,
-    //     zoom: 17,
-    //   });
-    //   var marker = createMarker({
-    //     map,
-    //     position: center.destinationPoint(90, 15),
-    //     icon: {
-    //       url: "IMAGE",
-    //       size: new naver.maps.Size(50, 52),
-    //       origin: new naver.maps.Point(0, 0),
-    //       anchor: new naver.maps.Point(25, 26),
-    //     },
-    //   });
-    // });
+    navigator.geolocation.getCurrentPosition(({ coords }) => {
+      const center = createCenter(coords.latitude, coords.longitude);
+      console.log(coords);
+      // Update my coords.
+      updateUserCoords(coords.latitude, coords.longitude);
+
+      const map = setCurrentPosition({
+        center,
+        zoom: 17,
+      });
+      var marker = createMarker({
+        map,
+        position: center.destinationPoint(90, 15),
+        icon: {
+          url: "IMAGE",
+          size: new naver.maps.Size(50, 52),
+          origin: new naver.maps.Point(0, 0),
+          anchor: new naver.maps.Point(25, 26),
+        },
+      });
+    });
   }, []);
+
+  const updateUserCoords = (latitude: number, longitude: number) => {
+    if (updateCoordsLoading) return;
+    updateCoords({
+      method: "PATCH",
+      data: {
+        latitude,
+        longitude,
+      },
+    });
+  };
 
   const onMemberClick = (id: number) => {
     console.log(id);
   };
+
+  useEffect(() => {
+    if (updateCoordsOk) {
+      console.log(updateCoordsOk);
+    }
+
+    if (updateCoordsError) {
+      console.error("[updateCoordsError]", updateCoordsError);
+    }
+  }, [updateCoordsOk, updateCoordsError]);
 
   return (
     <div>

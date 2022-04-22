@@ -12,12 +12,12 @@ import useCloudflare from "@libs/clients/useCloudflare";
 import EmptyAvatar from "@components/empty-avatar";
 
 interface UserModifyForm {
-  email: string;
+  email: string | null;
   name: string;
-  phone?: string;
+  phone?: string | null;
   gender: "MALE" | "FEMALE" | null;
   avatarPreview?: FileList;
-  avatar?: string;
+  avatar?: string | null;
 }
 
 export default function Modify() {

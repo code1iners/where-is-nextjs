@@ -18,6 +18,8 @@ This is a simple geo location service application.
   - [x] Import naver map sdk.
   - [x] Set current location.
   - [x] Set marker with location.
+  - [x] Update user's coordinates.
+  - [ ] Display user by coordinates.
 
 - #### Users.
 

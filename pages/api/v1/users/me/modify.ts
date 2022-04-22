@@ -32,6 +32,8 @@ const usersModify = async (
         phone: request.body?.phone,
         gender: request.body?.gender,
         avatar: request.body?.avatar,
+        latitude: request.body?.latitude,
+        longitude: request.body?.longitude,
       },
     });
 

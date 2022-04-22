@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "connect": "pscale connect where-is",
+    "db:push": "npx prisma db push",
     "studio": "npx prisma studio"
   },
   "dependencies": {

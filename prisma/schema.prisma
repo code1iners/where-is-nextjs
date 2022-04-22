@@ -23,6 +23,8 @@ model User {
   isDormant Boolean  @default(true)
   following User[]   @relation("UserFollow", references: [id])
   followed  User[]   @relation("UserFollow", references: [id])
+  latitude  Float?
+  longitude Float?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
