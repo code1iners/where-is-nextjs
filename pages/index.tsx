@@ -1,11 +1,16 @@
+import EmptyAvatar from "@components/empty-avatar";
+import UserAvatar from "@components/user-avatar";
 import useNaverMap from "@libs/clients/useNaverMap";
 import type { NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { useEffect } from "react";
+import useSWR from "swr";
+import { UserMeResult } from "./users/me";
 
 const Home: NextPage = () => {
   const { createCenter, setCurrentPosition, createMarker } = useNaverMap();
+  const { data } = useSWR<UserMeResult>("/api/v1/users/me");
 
   useEffect(() => {
     // navigator.geolocation.getCurrentPosition(({ coords }) => {
@@ -26,6 +31,10 @@ const Home: NextPage = () => {
     //   });
     // });
   }, []);
+
+  const onMemberClick = (id: number) => {
+    console.log(id);
+  };
 
   return (
     <div>
@@ -67,7 +76,7 @@ const Home: NextPage = () => {
           </a>
         </Link>
 
-        <ul className="absolute left-3 bottom-3">
+        <ul className="absolute left-3 bottom-3 flex items-center gap-2">
           <Link href={"/members/additions"}>
             <a>
               <li className="p-2 bg-white rounded-full">
@@ -88,6 +97,31 @@ const Home: NextPage = () => {
               </li>
             </a>
           </Link>
+
+          {data?.me.following.length
+            ? data?.me.following.map((user) =>
+                user.avatar ? (
+                  <li>
+                    <UserAvatar
+                      imageId={user.avatar}
+                      width={35}
+                      height={35}
+                      variant="avatar"
+                      alt="Avatar"
+                      onClick={() => onMemberClick(user.id)}
+                    />
+                  </li>
+                ) : (
+                  <li>
+                    <EmptyAvatar
+                      name={user.name}
+                      size="sm"
+                      onClick={() => onMemberClick(user.id)}
+                    />
+                  </li>
+                )
+              )
+            : null}
         </ul>
       </main>
     </div>

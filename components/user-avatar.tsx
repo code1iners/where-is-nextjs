@@ -1,3 +1,4 @@
+import clazz from "@libs/clients/clazz";
 import useCloudflare from "@libs/clients/useCloudflare";
 import Image from "next/image";
 
@@ -22,7 +23,11 @@ const UserAvatar = ({
 
   return (
     <div
-      className="rounded-full overflow-hidden hover:scale-105 transition flex justify-center items-center"
+      className={clazz(
+        `rounded-full overflow-hidden hover:scale-105 transition flex justify-center items-center
+        ${onClick ? "cursor-pointer" : "cursor-default"}
+        `
+      )}
       onClick={onClick}
     >
       <Image

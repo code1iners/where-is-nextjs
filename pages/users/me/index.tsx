@@ -5,18 +5,15 @@ import Link from "next/link";
 import Image from "next/image";
 import EmptyAvatar from "@components/empty-avatar";
 import useCloudflare from "@libs/clients/useCloudflare";
+import { User } from "@prisma/client";
 
-type User = {
-  id: number;
-  name: string;
-  email: string;
-  phone: string;
-  avatar: string;
-  gender: "MALE" | "FEMALE" | null;
-};
+interface CustomUser extends User {
+  following: User[];
+  followed: User[];
+}
 export interface UserMeResult {
   ok: boolean;
-  me: User;
+  me: CustomUser;
 }
 
 export default function Me() {

@@ -14,6 +14,7 @@ const usersSearch = async (
 ) => {
   try {
     const { name }: UserSearchQueries = request.query;
+
     const foundUsers = await client.user.findMany({
       where: {
         name: { startsWith: name },

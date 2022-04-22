@@ -37,13 +37,12 @@ const EmptyAvatar = ({ name, size = "md", onClick }: EmptyAvatarProps) => {
     <div
       onClick={onClick}
       className={clazz(
-        `flex justify-center items-center ${width} ${height} rounded-full bg-purple-400 hover:bg-purple-500 ${
-          onClick ? "cursor-pointer" : ""
-        }`
+        `flex justify-center items-center rounded-full bg-purple-400 hover:bg-purple-500 hover:scale-105 transition
+        ${height} ${width} ${onClick ? "cursor-pointer" : "cursor-default"}`
       )}
     >
       {name && name.length ? (
-        <span className={clazz(`${fontSize} font-bold cursor-default`)}>
+        <span className={clazz(`${fontSize} font-bold`)}>
           {name.toUpperCase()[0]}
         </span>
       ) : null}
