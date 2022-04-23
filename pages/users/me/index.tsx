@@ -7,7 +7,7 @@ import EmptyAvatar from "@components/empty-avatar";
 import useCloudflare from "@libs/clients/useCloudflare";
 import { User } from "@prisma/client";
 
-interface CustomUser extends User {
+export interface CustomUser extends User {
   following: User[];
   followed: User[];
 }

@@ -1,4 +1,5 @@
 import EmptyAvatar from "@components/empty-avatar";
+import HomeFooterMembers from "@components/home-footer-members";
 import UserAvatar from "@components/user-avatar";
 import useCloudflare from "@libs/clients/useCloudflare";
 import useMutation from "@libs/clients/useMutation";
@@ -47,6 +48,10 @@ const Home: NextPage = () => {
         map.setMapTypeId(naver.maps.MapTypeId.TERRAIN);
         map.panBy(new naver.maps.Point(35, 30));
 
+        naver.maps.Event.addListener(map, "drag", (e) => {
+          console.log("dragging");
+        });
+
         setNaverMap(map);
 
         // Set marker
@@ -71,14 +76,9 @@ const Home: NextPage = () => {
         });
 
         // Map click event listener.
-        onMapClickListener = naver.maps.Event.addListener(
-          map,
-          "click",
-          function (e) {
-            console.log(e);
-            setSelectedMember(undefined);
-          }
-        );
+        onMapClickListener = naver.maps.Event.addListener(map, "click", (e) => {
+          setSelectedMember(undefined);
+        });
 
         data.me.following.forEach((followingUser) => {
           const center = createCenter(
@@ -112,7 +112,7 @@ const Home: NextPage = () => {
     return () => {
       naver.maps.Event.removeListener(onMapClickListener);
     };
-  }, [data]);
+  }, []);
 
   useEffect(() => {
     if (selectedMember && naverMap) {
@@ -186,78 +186,10 @@ const Home: NextPage = () => {
           </a>
         </Link>
 
-        <ul className="absolute left-3 bottom-3 flex items-center gap-2">
-          <Link href={"/members/additions"}>
-            <a>
-              <li className="p-2 bg-white rounded-full">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
-                  />
-                </svg>
-              </li>
-            </a>
-          </Link>
-
-          {data?.me.avatar ? (
-            data.me.avatar ? (
-              <li key={data.me.id}>
-                <UserAvatar
-                  imageId={data.me.avatar}
-                  width={35}
-                  height={35}
-                  variant="avatar"
-                  alt="Avatar"
-                  onClick={() => setSelectedMember(data.me)}
-                />
-              </li>
-            ) : (
-              <li key={data.me.id}>
-                <EmptyAvatar
-                  name={data.me.name}
-                  size="sm"
-                  isCursorPointer={true}
-                  onClick={() => setSelectedMember(data.me)}
-                />
-              </li>
-            )
-          ) : null}
-
-          {data?.me.following.length
-            ? data?.me.following.map((user) =>
-                user.avatar ? (
-                  <li key={user.id}>
-                    <UserAvatar
-                      imageId={user.avatar}
-                      width={35}
-                      height={35}
-                      variant="avatar"
-                      alt="Avatar"
-                      onClick={() => setSelectedMember(user)}
-                    />
-                  </li>
-                ) : (
-                  <li key={user.id}>
-                    <EmptyAvatar
-                      name={user.name}
-                      size="sm"
-                      isCursorPointer={true}
-                      onClick={() => setSelectedMember(user)}
-                    />
-                  </li>
-                )
-              )
-            : null}
-        </ul>
+        {/* Footer members */}
+        {data?.me ? (
+          <HomeFooterMembers me={data.me} onSelectMember={setSelectedMember} />
+        ) : null}
       </main>
     </div>
   );
