@@ -21,6 +21,8 @@ const usersMe = async (request: NextApiRequest, response: NextApiResponse) => {
             id: true,
             avatar: true,
             name: true,
+            latitude: true,
+            longitude: true,
           },
         },
       },

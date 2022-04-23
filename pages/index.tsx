@@ -1,16 +1,23 @@
 import EmptyAvatar from "@components/empty-avatar";
 import UserAvatar from "@components/user-avatar";
+import useCloudflare from "@libs/clients/useCloudflare";
 import useMutation from "@libs/clients/useMutation";
 import useNaverMap from "@libs/clients/useNaverMap";
 import type { NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import useSWR from "swr";
 import { UserMeResult } from "./users/me";
 
 const Home: NextPage = () => {
-  const { createCenter, setCurrentPosition, createMarker } = useNaverMap();
+  const {
+    createCenter,
+    setCurrentPosition,
+    createMarker,
+    makeCircleMarkerIconContentByUrl,
+    makeCircleMarkerIconContentByName,
+  } = useNaverMap();
   const { data } = useSWR<UserMeResult>("/api/v1/users/me");
   const [
     updateCoords,
@@ -20,30 +27,74 @@ const Home: NextPage = () => {
       loading: updateCoordsLoading,
     },
   ] = useMutation("/api/v1/users/me/modify");
+  const { createImageUrl } = useCloudflare();
+  const [naverMap, setNaverMap] = useState<naver.maps.Map>();
+  const [myMarker, setMyMarker] = useState<naver.maps.Marker>();
 
   useEffect(() => {
-    navigator.geolocation.getCurrentPosition(({ coords }) => {
-      const center = createCenter(coords.latitude, coords.longitude);
-      console.log(coords);
-      // Update my coords.
-      updateUserCoords(coords.latitude, coords.longitude);
+    if (data) {
+      navigator.geolocation.getCurrentPosition(async ({ coords }) => {
+        // Update my coords.
+        await updateUserCoords(coords.latitude, coords.longitude);
 
-      const map = setCurrentPosition({
-        center,
-        zoom: 17,
+        const center = createCenter(coords.latitude, coords.longitude);
+        const map = setCurrentPosition({
+          center,
+          zoom: 17,
+        });
+        map.setMapTypeId(naver.maps.MapTypeId.TERRAIN);
+
+        // Set marker
+        createMarker({
+          map,
+          position: center.destinationPoint(90, 15),
+          ...(data.me.avatar && {
+            icon: {
+              content: makeCircleMarkerIconContentByUrl(
+                createImageUrl({
+                  imageId: data.me.avatar + "",
+                  variant: "avatar",
+                })
+              ),
+            },
+          }),
+          zIndex: 100,
+        });
+
+        // Map click event listener.
+        // const clickListener = naver.maps.Event.addListener(
+        //   map,
+        //   "click",
+        //   function (e) {
+        //     console.log(e);
+        //   }
+        // );
+
+        data.me.following.forEach((followingUser) => {
+          const center = createCenter(
+            Number(followingUser.latitude),
+            Number(followingUser.longitude)
+          );
+
+          createMarker({
+            map,
+            position: center.destinationPoint(90, 15),
+            title: followingUser.name,
+            icon: {
+              content: followingUser.avatar
+                ? makeCircleMarkerIconContentByUrl(
+                    createImageUrl({
+                      imageId: followingUser.avatar + "",
+                      variant: "avatar",
+                    })
+                  )
+                : makeCircleMarkerIconContentByName(followingUser.name),
+            },
+          });
+        });
       });
-      var marker = createMarker({
-        map,
-        position: center.destinationPoint(90, 15),
-        icon: {
-          url: "IMAGE",
-          size: new naver.maps.Size(50, 52),
-          origin: new naver.maps.Point(0, 0),
-          anchor: new naver.maps.Point(25, 26),
-        },
-      });
-    });
-  }, []);
+    }
+  }, [data]);
 
   const updateUserCoords = (latitude: number, longitude: number) => {
     if (updateCoordsLoading) return;
@@ -56,19 +107,18 @@ const Home: NextPage = () => {
     });
   };
 
-  const onMemberClick = (id: number) => {
-    console.log(id);
-  };
-
   useEffect(() => {
     if (updateCoordsOk) {
-      console.log(updateCoordsOk);
     }
 
     if (updateCoordsError) {
       console.error("[updateCoordsError]", updateCoordsError);
     }
   }, [updateCoordsOk, updateCoordsError]);
+
+  const onMemberClick = (id: number) => {
+    console.log(id);
+  };
 
   return (
     <div>
@@ -135,7 +185,7 @@ const Home: NextPage = () => {
           {data?.me.following.length
             ? data?.me.following.map((user) =>
                 user.avatar ? (
-                  <li>
+                  <li key={user.id}>
                     <UserAvatar
                       imageId={user.avatar}
                       width={35}
@@ -146,7 +196,7 @@ const Home: NextPage = () => {
                     />
                   </li>
                 ) : (
-                  <li>
+                  <li key={user.id}>
                     <EmptyAvatar
                       name={user.name}
                       size="sm"

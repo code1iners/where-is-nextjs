@@ -130,7 +130,7 @@ export default function Modify() {
                       alt="Avatar"
                     />
                   ) : (
-                    <EmptyAvatar name={data.me.name} />
+                    <EmptyAvatar name={data.me.name} isCursorPointer={true} />
                   )}
 
                   <input

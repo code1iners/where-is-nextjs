@@ -4,10 +4,16 @@ import { useEffect, useState } from "react";
 interface EmptyAvatarProps {
   name?: string;
   size?: "sm" | "md" | "lg";
+  isCursorPointer?: boolean;
   onClick?: () => void;
 }
 
-const EmptyAvatar = ({ name, size = "md", onClick }: EmptyAvatarProps) => {
+const EmptyAvatar = ({
+  name,
+  size = "md",
+  isCursorPointer = false,
+  onClick,
+}: EmptyAvatarProps) => {
   const [width, setWidth] = useState("");
   const [height, setHeight] = useState("");
   const [fontSize, setFontSize] = useState("");
@@ -38,7 +44,9 @@ const EmptyAvatar = ({ name, size = "md", onClick }: EmptyAvatarProps) => {
       onClick={onClick}
       className={clazz(
         `flex justify-center items-center rounded-full bg-purple-400 hover:bg-purple-500 hover:scale-105 transition
-        ${height} ${width} ${onClick ? "cursor-pointer" : "cursor-default"}`
+        ${height} ${width} ${
+          isCursorPointer ? "cursor-pointer" : "cursor-default"
+        }`
       )}
     >
       {name && name.length ? (
