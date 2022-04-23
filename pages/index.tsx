@@ -3,6 +3,7 @@ import UserAvatar from "@components/user-avatar";
 import useCloudflare from "@libs/clients/useCloudflare";
 import useMutation from "@libs/clients/useMutation";
 import useNaverMap from "@libs/clients/useNaverMap";
+import { User } from "@prisma/client";
 import type { NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
@@ -28,10 +29,11 @@ const Home: NextPage = () => {
     },
   ] = useMutation("/api/v1/users/me/modify");
   const { createImageUrl } = useCloudflare();
+  const [selectedMember, setSelectedMember] = useState<User>();
   const [naverMap, setNaverMap] = useState<naver.maps.Map>();
-  const [myMarker, setMyMarker] = useState<naver.maps.Marker>();
 
   useEffect(() => {
+    let onMapClickListener: naver.maps.MapEventListener;
     if (data) {
       navigator.geolocation.getCurrentPosition(async ({ coords }) => {
         // Update my coords.
@@ -43,9 +45,12 @@ const Home: NextPage = () => {
           zoom: 17,
         });
         map.setMapTypeId(naver.maps.MapTypeId.TERRAIN);
+        map.panBy(new naver.maps.Point(35, 30));
+
+        setNaverMap(map);
 
         // Set marker
-        createMarker({
+        const myMarker = createMarker({
           map,
           position: center.destinationPoint(90, 15),
           ...(data.me.avatar && {
@@ -60,15 +65,20 @@ const Home: NextPage = () => {
           }),
           zIndex: 100,
         });
+        myMarker.set("data", data.me);
+        naver.maps.Event.addListener(myMarker, "click", (e) => {
+          setSelectedMember(data.me);
+        });
 
         // Map click event listener.
-        // const clickListener = naver.maps.Event.addListener(
-        //   map,
-        //   "click",
-        //   function (e) {
-        //     console.log(e);
-        //   }
-        // );
+        onMapClickListener = naver.maps.Event.addListener(
+          map,
+          "click",
+          function (e) {
+            console.log(e);
+            setSelectedMember(undefined);
+          }
+        );
 
         data.me.following.forEach((followingUser) => {
           const center = createCenter(
@@ -76,7 +86,7 @@ const Home: NextPage = () => {
             Number(followingUser.longitude)
           );
 
-          createMarker({
+          const marker = createMarker({
             map,
             position: center.destinationPoint(90, 15),
             title: followingUser.name,
@@ -91,10 +101,30 @@ const Home: NextPage = () => {
                 : makeCircleMarkerIconContentByName(followingUser.name),
             },
           });
+          marker.set("data", followingUser);
+          naver.maps.Event.addListener(marker, "click", (e) => {
+            setSelectedMember(followingUser);
+          });
         });
       });
     }
+
+    return () => {
+      naver.maps.Event.removeListener(onMapClickListener);
+    };
   }, [data]);
+
+  useEffect(() => {
+    if (selectedMember && naverMap) {
+      console.log(selectedMember);
+      const { latitude, longitude } = selectedMember;
+      console.log(Number(latitude), Number(longitude));
+
+      const center = new naver.maps.LatLng(Number(latitude), Number(longitude));
+      naverMap.setCenter(center);
+      naverMap.panBy(new naver.maps.Point(35, 30));
+    }
+  }, [selectedMember, naverMap]);
 
   const updateUserCoords = (latitude: number, longitude: number) => {
     if (updateCoordsLoading) return;
@@ -115,10 +145,6 @@ const Home: NextPage = () => {
       console.error("[updateCoordsError]", updateCoordsError);
     }
   }, [updateCoordsOk, updateCoordsError]);
-
-  const onMemberClick = (id: number) => {
-    console.log(id);
-  };
 
   return (
     <div>
@@ -182,6 +208,30 @@ const Home: NextPage = () => {
             </a>
           </Link>
 
+          {data?.me.avatar ? (
+            data.me.avatar ? (
+              <li key={data.me.id}>
+                <UserAvatar
+                  imageId={data.me.avatar}
+                  width={35}
+                  height={35}
+                  variant="avatar"
+                  alt="Avatar"
+                  onClick={() => setSelectedMember(data.me)}
+                />
+              </li>
+            ) : (
+              <li key={data.me.id}>
+                <EmptyAvatar
+                  name={data.me.name}
+                  size="sm"
+                  isCursorPointer={true}
+                  onClick={() => setSelectedMember(data.me)}
+                />
+              </li>
+            )
+          ) : null}
+
           {data?.me.following.length
             ? data?.me.following.map((user) =>
                 user.avatar ? (
@@ -192,7 +242,7 @@ const Home: NextPage = () => {
                       height={35}
                       variant="avatar"
                       alt="Avatar"
-                      onClick={() => onMemberClick(user.id)}
+                      onClick={() => setSelectedMember(user)}
                     />
                   </li>
                 ) : (
@@ -200,7 +250,8 @@ const Home: NextPage = () => {
                     <EmptyAvatar
                       name={user.name}
                       size="sm"
-                      onClick={() => onMemberClick(user.id)}
+                      isCursorPointer={true}
+                      onClick={() => setSelectedMember(user)}
                     />
                   </li>
                 )

@@ -16,6 +16,8 @@ const usersMe = async (request: NextApiRequest, response: NextApiResponse) => {
         email: true,
         avatar: true,
         gender: true,
+        latitude: true,
+        longitude: true,
         following: {
           select: {
             id: true,
