@@ -1,15 +1,15 @@
 import Link from "next/link";
 import UserAvatar from "./user-avatar";
 import EmptyAvatar from "./empty-avatar";
-import { CustomUser } from "pages/users/me";
-import { User } from "@prisma/client";
+import { CustomUser, UserMeResult } from "pages/users/me";
+import { useSetRecoilState } from "recoil";
+import { selectedMemberAtom } from "atoms";
+import useSWR from "swr";
 
-interface HomeFooterMembersProps {
-  me: CustomUser;
-  onSelectMember: (me: User) => void;
-}
+const HomeFooterMembers = () => {
+  const { data } = useSWR<UserMeResult>("/api/v1/users/me");
+  const setSelectedMember = useSetRecoilState(selectedMemberAtom);
 
-const HomeFooterMembers = ({ me, onSelectMember }: HomeFooterMembersProps) => {
   return (
     <ul className="absolute left-3 bottom-3 flex items-center gap-2">
       <Link href={"/members/additions"}>
@@ -33,30 +33,32 @@ const HomeFooterMembers = ({ me, onSelectMember }: HomeFooterMembersProps) => {
         </a>
       </Link>
 
-      {me.avatar ? (
-        <li key={me.id}>
-          <UserAvatar
-            imageId={me.avatar}
-            width={50}
-            height={50}
-            variant="avatar"
-            alt="Avatar"
-            onClick={() => onSelectMember(me)}
-          />
-        </li>
-      ) : (
-        <li key={me.id}>
-          <EmptyAvatar
-            name={me.name}
-            size="md"
-            isCursorPointer={true}
-            onClick={() => onSelectMember(me)}
-          />
-        </li>
-      )}
+      {data ? (
+        data.me.avatar ? (
+          <li key={data.me.id}>
+            <UserAvatar
+              imageId={data.me.avatar}
+              width={50}
+              height={50}
+              variant="avatar"
+              alt="Avatar"
+              onClick={() => setSelectedMember(data.me)}
+            />
+          </li>
+        ) : (
+          <li key={data.me.id}>
+            <EmptyAvatar
+              name={data.me.name}
+              size="md"
+              isCursorPointer={true}
+              onClick={() => setSelectedMember(data.me)}
+            />
+          </li>
+        )
+      ) : null}
 
-      {me.following.length
-        ? me.following.map((user) =>
+      {data?.me.following.length
+        ? data.me.following.map((user) =>
             user.avatar ? (
               <li key={user.id}>
                 <UserAvatar
@@ -65,7 +67,7 @@ const HomeFooterMembers = ({ me, onSelectMember }: HomeFooterMembersProps) => {
                   height={50}
                   variant="avatar"
                   alt="Avatar"
-                  onClick={() => onSelectMember(user)}
+                  onClick={() => setSelectedMember(user)}
                 />
               </li>
             ) : (
@@ -74,7 +76,7 @@ const HomeFooterMembers = ({ me, onSelectMember }: HomeFooterMembersProps) => {
                   name={user.name}
                   size="md"
                   isCursorPointer={true}
-                  onClick={() => onSelectMember(user)}
+                  onClick={() => setSelectedMember(user)}
                 />
               </li>
             )

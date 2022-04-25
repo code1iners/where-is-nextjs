@@ -1,8 +1,8 @@
 const useNaverMap = () => {
-  const createCenter = (latitude: number, longitude: number) =>
+  const createPosition = (latitude: number, longitude: number) =>
     new naver.maps.LatLng(latitude, longitude);
 
-  const setCurrentPosition = (
+  const createMap = (
     options: naver.maps.MapOptions | undefined
   ): naver.maps.Map => new naver.maps.Map("map", options);
 
@@ -27,8 +27,8 @@ const useNaverMap = () => {
   };
 
   return {
-    createCenter,
-    setCurrentPosition,
+    createPosition,
+    createMap,
     createMarker,
     makeCircleMarkerIconContentByName,
     makeCircleMarkerIconContentByUrl,

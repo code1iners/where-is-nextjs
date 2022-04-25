@@ -3,6 +3,7 @@ import type { AppProps } from "next/app";
 import { useEffect, useState } from "react";
 import useAuth from "@libs/clients/useAuth";
 import { SWRConfig } from "swr";
+import { RecoilRoot } from "recoil";
 
 const noCheckUrls = ["/auth/login", "/auth/join"];
 
@@ -38,7 +39,9 @@ function MyApp({ Component, pageProps, router }: AppProps) {
           fetch(resource, init).then((res) => res.json()),
       }}
     >
-      <Component {...pageProps} />
+      <RecoilRoot>
+        <Component {...pageProps} />
+      </RecoilRoot>
     </SWRConfig>
   ) : null;
 }
