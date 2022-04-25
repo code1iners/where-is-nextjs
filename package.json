@@ -7,9 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "connect": "pscale connect where-is",
+    "db:connect": "pscale connect where-is",
     "db:push": "npx prisma db push",
-    "studio": "npx prisma studio"
+    "db:studio": "npx prisma studio"
   },
   "dependencies": {
     "@prisma/client": "^3.12.0",

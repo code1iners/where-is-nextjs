@@ -10,18 +10,22 @@ const useNaverMap = () => {
     new naver.maps.Marker(options);
 
   const makeCircleMarkerIconContentByName = (name: string, ...rest: any) => {
+    const displayName = name.length ? name[0].toUpperCase() : null;
+    console.log(displayName);
+
     return `<div
-              class="w-10 h-10 rounded-full object-cover bg-purple-400 hover:bg-purple-500 flex justify-center items-center transition hover:scale-105"
-              ${{ ...rest }}>
-              ${name.length ? `<span>${name[0].toUpperCase()}</span>` : null}
+              class="rounded-full object-cover bg-purple-400 hover:bg-purple-500 flex justify-center items-center transition hover:scale-105"
+              style="width:40px;height:40px;" ${{ ...rest }}>
+              <span>${displayName}</span>
             </div>`;
   };
 
   const makeCircleMarkerIconContentByUrl = (imageUrl: string, ...rest: any) => {
     return `<img
-              class="w-10 h-10 rounded-full object-cover hover:scale-105 transition"
-              ${{ ...rest }}
-              src="${imageUrl}"/>`;
+              class="rounded-full object-cover hover:scale-105 transition"
+              style="width:40px;height:40px"
+              src="${imageUrl}"
+              ${{ ...rest }} />`;
   };
 
   return {

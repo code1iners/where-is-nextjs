@@ -78,6 +78,7 @@ export default function Login() {
               <input
                 {...register("email", {
                   required: true,
+                  disabled: loading,
                 })}
                 className="input-text"
                 type="email"
@@ -97,6 +98,7 @@ export default function Login() {
               <input
                 {...register("password", {
                   required: "Password is required.",
+                  disabled: loading,
                   minLength: {
                     value: 8,
                     message: "Password must have at least 8 digits.",
