@@ -123,7 +123,7 @@ const Additions: NextPage = () => {
 
       <article>
         <section className="flex flex-col gap-3 divide-y">
-          {!isSearchLoading ? (
+          {isSearchLoading ? (
             <LoadingTextWavy />
           ) : foundMembers.length ? (
             foundMembers.map((member) => (

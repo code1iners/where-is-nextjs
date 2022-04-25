@@ -1,12 +1,12 @@
 import useCloudflare from "@libs/clients/useCloudflare";
 import useNaverMap from "@libs/clients/useNaverMap";
-import { User } from "@prisma/client";
 import { UserMeResult } from "pages/users/me";
 import { useEffect, useRef, useState } from "react";
 import useSWR from "swr";
 import { useRecoilState } from "recoil";
 import { selectedMemberAtom } from "atoms";
 import useMutation from "@libs/clients/useMutation";
+import LoadingTextWavy from "./loading-text-wavy";
 
 const NaverMap = () => {
   const { data } = useSWR<UserMeResult>("/api/v1/users/me");
@@ -169,7 +169,7 @@ const NaverMap = () => {
   }, [naverMap, selectedMember]);
 
   return (
-    <div
+    <section
       ref={div}
       id="map"
       className="absolute"
@@ -177,7 +177,9 @@ const NaverMap = () => {
         width: "100%",
         height: "100vh",
       }}
-    />
+    >
+      {onLoaded ? null : <LoadingTextWavy />}
+    </section>
   );
 };
 
