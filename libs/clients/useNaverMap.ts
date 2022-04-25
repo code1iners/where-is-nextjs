@@ -11,11 +11,9 @@ const useNaverMap = () => {
 
   const makeCircleMarkerIconContentByName = (name: string, ...rest: any) => {
     const displayName = name.length ? name[0].toUpperCase() : null;
-    console.log(displayName);
-
     return `<div
-              class="rounded-full object-cover bg-purple-400 hover:bg-purple-500 flex justify-center items-center transition hover:scale-105"
-              style="width:40px;height:40px;" ${{ ...rest }}>
+              class="rounded-full object-cover bg-purple-400 hover:bg-purple-500 flex justify-center items-center transition hover:scale-105 font-bold text-xl"
+              style="width:50px;height:50px;" ${{ ...rest }}>
               <span>${displayName}</span>
             </div>`;
   };
@@ -23,7 +21,7 @@ const useNaverMap = () => {
   const makeCircleMarkerIconContentByUrl = (imageUrl: string, ...rest: any) => {
     return `<img
               class="rounded-full object-cover hover:scale-105 transition"
-              style="width:40px;height:40px"
+              style="width:50px;height:50px;"
               src="${imageUrl}"
               ${{ ...rest }} />`;
   };

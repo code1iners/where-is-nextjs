@@ -1,6 +1,6 @@
 const LoadingTextWavy = () => {
   return (
-    <div className="flex justify-center items-center p-20 tracking-[2px]">
+    <div className="flex justify-center items-center tracking-[2px] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
       <span className="animate-[loading_1s_ease-in-out_infinite]">L</span>
       <span className="animate-[loading_1s_ease-in-out_infinite] animation-delay-100">
         o

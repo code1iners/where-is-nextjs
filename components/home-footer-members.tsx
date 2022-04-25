@@ -17,7 +17,7 @@ const HomeFooterMembers = ({ me, onSelectMember }: HomeFooterMembersProps) => {
           <li className="p-2 bg-white rounded-full">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
+              className="h-[30px] w-[30px]"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -34,28 +34,26 @@ const HomeFooterMembers = ({ me, onSelectMember }: HomeFooterMembersProps) => {
       </Link>
 
       {me.avatar ? (
-        me.avatar ? (
-          <li key={me.id}>
-            <UserAvatar
-              imageId={me.avatar}
-              width={35}
-              height={35}
-              variant="avatar"
-              alt="Avatar"
-              onClick={() => onSelectMember(me)}
-            />
-          </li>
-        ) : (
-          <li key={me.id}>
-            <EmptyAvatar
-              name={me.name}
-              size="sm"
-              isCursorPointer={true}
-              onClick={() => onSelectMember(me)}
-            />
-          </li>
-        )
-      ) : null}
+        <li key={me.id}>
+          <UserAvatar
+            imageId={me.avatar}
+            width={50}
+            height={50}
+            variant="avatar"
+            alt="Avatar"
+            onClick={() => onSelectMember(me)}
+          />
+        </li>
+      ) : (
+        <li key={me.id}>
+          <EmptyAvatar
+            name={me.name}
+            size="md"
+            isCursorPointer={true}
+            onClick={() => onSelectMember(me)}
+          />
+        </li>
+      )}
 
       {me.following.length
         ? me.following.map((user) =>
@@ -63,8 +61,8 @@ const HomeFooterMembers = ({ me, onSelectMember }: HomeFooterMembersProps) => {
               <li key={user.id}>
                 <UserAvatar
                   imageId={user.avatar}
-                  width={35}
-                  height={35}
+                  width={50}
+                  height={50}
                   variant="avatar"
                   alt="Avatar"
                   onClick={() => onSelectMember(user)}
@@ -74,7 +72,7 @@ const HomeFooterMembers = ({ me, onSelectMember }: HomeFooterMembersProps) => {
               <li key={user.id}>
                 <EmptyAvatar
                   name={user.name}
-                  size="sm"
+                  size="md"
                   isCursorPointer={true}
                   onClick={() => onSelectMember(user)}
                 />

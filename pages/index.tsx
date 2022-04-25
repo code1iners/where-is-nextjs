@@ -1,4 +1,5 @@
 import HomeFooterMembers from "@components/home-footer-members";
+import LoadingTextWavy from "@components/loading-text-wavy";
 import NaverMap from "@components/naver-map";
 import SettingFloatingButton from "@components/setting-floating-button";
 import useCloudflare from "@libs/clients/useCloudflare";
@@ -31,6 +32,7 @@ const Home: NextPage = () => {
   const { createImageUrl } = useCloudflare();
   const [selectedMember, setSelectedMember] = useState<User>();
   const [naverMap, setNaverMap] = useState<naver.maps.Map>();
+  const [mapReady, setMapReady] = useState(false);
 
   useEffect(() => {
     let onMapClickListener: naver.maps.MapEventListener;
@@ -49,6 +51,10 @@ const Home: NextPage = () => {
 
         naver.maps.Event.addListener(map, "drag", (e) => {
           console.log("dragging");
+        });
+
+        naver.maps.Event.addListener(map, "load", (e) => {
+          console.log("loaded");
         });
 
         setNaverMap(map);
@@ -104,6 +110,8 @@ const Home: NextPage = () => {
           naver.maps.Event.addListener(marker, "click", (e) => {
             setSelectedMember(followingUser);
           });
+
+          setMapReady(true);
         });
       });
     }
@@ -114,13 +122,13 @@ const Home: NextPage = () => {
   }, [data]);
 
   useEffect(() => {
-    if (selectedMember && naverMap) {
+    if (selectedMember && mapReady && naverMap) {
       const { latitude, longitude } = selectedMember;
       const center = new naver.maps.LatLng(Number(latitude), Number(longitude));
       naverMap.setCenter(center);
       naverMap.panBy(new naver.maps.Point(35, 30));
     }
-  }, [selectedMember, naverMap]);
+  }, [selectedMember, mapReady, naverMap]);
 
   const updateUserCoords = (latitude: number, longitude: number) => {
     if (updateCoordsLoading) return;
@@ -139,24 +147,25 @@ const Home: NextPage = () => {
   }, [updateCoordsError]);
 
   return (
-    <div>
+    <>
       <Head>
         <title>Home | Where is</title>
       </Head>
 
-      <main className="relative w-full h-screen">
-        {/* Naver map */}
-        <NaverMap />
-
+      <main className="">
         {/* Header setting button */}
         <SettingFloatingButton position="top-right" />
+
+        {/* Naver map */}
+        <NaverMap onLoad={() => setMapReady(true)} />
+        {mapReady ? null : <LoadingTextWavy />}
 
         {/* Footer members */}
         {data?.me ? (
           <HomeFooterMembers me={data.me} onSelectMember={setSelectedMember} />
         ) : null}
       </main>
-    </div>
+    </>
   );
 };
 

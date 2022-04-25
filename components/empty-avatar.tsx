@@ -26,9 +26,9 @@ const EmptyAvatar = ({
           setFontSize("text-md");
           break;
         case "md":
-          setWidth("w-[70px]");
-          setHeight("h-[70px]");
-          setFontSize("text-4xl");
+          setWidth("w-[50px]");
+          setHeight("h-[50px]");
+          setFontSize("text-3xl");
           break;
         case "lg":
           setWidth("w-[120px]");
