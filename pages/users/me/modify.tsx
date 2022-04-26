@@ -10,6 +10,7 @@ import { UserMeResult } from ".";
 import useRandom from "@libs/clients/useRandom";
 import useCloudflare from "@libs/clients/useCloudflare";
 import EmptyAvatar from "@components/empty-avatar";
+import LoadingTextWavy from "@components/loading-text-wavy";
 
 interface UserModifyForm {
   email: string | null;
@@ -97,6 +98,8 @@ export default function Modify() {
       setAvatarPreview(URL.createObjectURL(file));
     }
   }, [avatar]);
+
+  if (modifyLoading) return <LoadingTextWavy />;
 
   return (
     <MobileLayout seoTitle="">
