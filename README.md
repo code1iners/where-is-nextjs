@@ -14,7 +14,6 @@ This is a simple geo location service application.
   - [x] Prohibited area for logged in user.
   - [x] User logout.
   - [x] Delete user account.
-  - [ ] Join/Login loading.
   - [x] Fix first login error.
 
 - #### Geo location.
@@ -36,6 +35,12 @@ This is a simple geo location service application.
   - [x] Listing following members.
 
 - #### Responsive web design.
+
   - [x] Mobile.
   - [ ] Tablet.
   - [ ] PC.
+
+- #### Styling.
+  - [x] Join/Login loading.
+  - [ ] Data mutation loading.
+  - [ ] Make sexy input fields.

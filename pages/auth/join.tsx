@@ -7,6 +7,7 @@ import { LoginResultData } from "pages/api/v1/auth/login";
 import MobileLayout from "@components/mobile-layout";
 import HorizontalDivider from "@components/horizontal-divider";
 import useMutation from "@libs/clients/useMutation";
+import LoadingTextWavy from "@components/loading-text-wavy";
 
 export interface JoinForm {
   email: string;
@@ -69,6 +70,8 @@ export default function Join() {
       console.error("[login]", joinError);
     }
   }, [loginOk, loginData, loginError]);
+
+  if (joinLoading) return <LoadingTextWavy />;
 
   return (
     <MobileLayout seoTitle="회원가입">

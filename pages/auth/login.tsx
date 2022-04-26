@@ -1,5 +1,6 @@
 import HorizontalButton from "@components/horizontal-button";
 import HorizontalDivider from "@components/horizontal-divider";
+import LoadingTextWavy from "@components/loading-text-wavy";
 import MobileLayout from "@components/mobile-layout";
 import useMutation from "@libs/clients/useMutation";
 import Link from "next/link";
@@ -65,6 +66,8 @@ export default function Login() {
       }
     }
   }, [ok, data, error, loading]);
+
+  if (loading) return <LoadingTextWavy />;
 
   return (
     <MobileLayout seoTitle="로그인">
