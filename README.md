@@ -26,6 +26,12 @@ This is a simple geo location service application.
   - [x] Update user's profile.
 
 - #### Members.
+
   - [x] Add following & followed.
   - [x] Remove following & followed.
   - [x] Listing following members.
+
+- #### Responsive web design.
+  - [x] Mobile.
+  - [ ] Tablet.
+  - [ ] PC.
