@@ -42,5 +42,5 @@ This is a simple geo location service application.
 
 - #### Styling.
   - [x] Join/Login loading.
-  - [ ] Data mutation loading.
+  - [x] Data mutation loading.
   - [ ] Make sexy input fields.
