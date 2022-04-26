@@ -61,16 +61,16 @@ const Settings: NextPage = () => {
         <section>
           <ul className="flex flex-col text-sm tracking-wide divide-y">
             <li onClick={onAccountUpdateClick} className="list-item">
-              내 정보
+              <button>내 정보</button>
             </li>
             <li onClick={onLogoutClick} className="list-item">
-              로그아웃
+              <button>로그아웃</button>
             </li>
             <li
               onClick={onDeleteAccountClick}
               className="list-item text-red-500"
             >
-              계정 삭제
+              <button>계정 삭제</button>
             </li>
           </ul>
         </section>
