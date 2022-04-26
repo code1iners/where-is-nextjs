@@ -34,35 +34,35 @@ const HomeFooterMembers = () => {
       </Link>
 
       {data ? (
-        data.me.avatar ? (
-          <li key={data.me.id}>
+        data?.me?.avatar ? (
+          <li key={data?.me?.id}>
             <UserAvatar
-              imageId={data.me.avatar}
+              imageId={data?.me.avatar}
               width={50}
               height={50}
               variant="avatar"
               alt="Avatar"
-              onClick={() => setSelectedMember(data.me)}
+              onClick={() => setSelectedMember(data?.me)}
             />
           </li>
         ) : (
-          <li key={data.me.id}>
+          <li key={data?.me?.id}>
             <EmptyAvatar
-              name={data.me.name}
+              name={data?.me?.name}
               size="md"
               isCursorPointer={true}
-              onClick={() => setSelectedMember(data.me)}
+              onClick={() => setSelectedMember(data?.me)}
             />
           </li>
         )
       ) : null}
 
-      {data?.me.following.length
-        ? data.me.following.map((user) =>
-            user.avatar ? (
-              <li key={user.id}>
+      {data?.me?.following?.length
+        ? data?.me?.following.map((user) =>
+            user?.avatar ? (
+              <li key={user?.id}>
                 <UserAvatar
-                  imageId={user.avatar}
+                  imageId={user?.avatar}
                   width={50}
                   height={50}
                   variant="avatar"
@@ -71,9 +71,9 @@ const HomeFooterMembers = () => {
                 />
               </li>
             ) : (
-              <li key={user.id}>
+              <li key={user?.id}>
                 <EmptyAvatar
-                  name={user.name}
+                  name={user?.name}
                   size="md"
                   isCursorPointer={true}
                   onClick={() => setSelectedMember(user)}

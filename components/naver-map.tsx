@@ -106,18 +106,18 @@ const NaverMap = () => {
       const myMarker = createMarker({
         map: naverMap,
         position: createPosition(
-          data.me.latitude ?? naverMapCenter.lat(),
-          data.me.longitude ?? naverMapCenter.lng()
+          data.me?.latitude ?? naverMapCenter.lat(),
+          data.me?.longitude ?? naverMapCenter.lng()
         ),
         icon: {
-          content: data.me.avatar
+          content: data.me?.avatar
             ? makeCircleMarkerIconContentByUrl(
                 createImageUrl({
-                  imageId: data.me.avatar + "",
+                  imageId: data.me?.avatar + "",
                   variant: "avatar",
                 })
               )
-            : makeCircleMarkerIconContentByName(data.me.name),
+            : makeCircleMarkerIconContentByName(data.me?.name),
         },
         zIndex: 100,
       });
@@ -148,7 +148,7 @@ const NaverMap = () => {
                     variant: "avatar",
                   })
                 )
-              : makeCircleMarkerIconContentByName(member.name),
+              : makeCircleMarkerIconContentByName(member?.name),
           },
         });
         marker.set("data", member);

@@ -40,7 +40,7 @@ export default function Login() {
     if (ok && data) {
       sessionStorage.setItem("ACCESS_TOKEN", data.token);
 
-      router.push("/");
+      router.replace("/");
     } else {
       if (error) {
         console.error("[login]", error);

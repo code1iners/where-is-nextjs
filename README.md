@@ -2,6 +2,8 @@
 
 This is a simple geo location service application.
 
+[Go to check it out](https://where-is.codeliners.cc)
+
 ### Services.
 
 - #### Auth.
@@ -12,6 +14,8 @@ This is a simple geo location service application.
   - [x] Prohibited area for logged in user.
   - [x] User logout.
   - [x] Delete user account.
+  - [ ] Join/Login loading.
+  - [x] Fix first login error.
 
 - #### Geo location.
 

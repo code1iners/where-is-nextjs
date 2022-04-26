@@ -1,11 +1,12 @@
-import MobileLayout from "@components/mobile-layout";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { JoinResultData } from "pages/api/v1/auth/join";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import HorizontalDivider from "../../components/horizontal-divider";
-import useMutation from "../../libs/clients/useMutation";
+import { JoinResultData } from "pages/api/v1/auth/join";
+import { LoginResultData } from "pages/api/v1/auth/login";
+import MobileLayout from "@components/mobile-layout";
+import HorizontalDivider from "@components/horizontal-divider";
+import useMutation from "@libs/clients/useMutation";
 
 export interface JoinForm {
   email: string;
@@ -27,6 +28,10 @@ export default function Join() {
     join,
     { ok: joinOk, data: joinData, error: joinError, loading: joinLoading },
   ] = useMutation<JoinResultData>("/api/v1/auth/join");
+  const [
+    login,
+    { ok: loginOk, data: loginData, error: loginError, loading: loginLoading },
+  ] = useMutation<LoginResultData>("/api/v1/auth/login");
 
   const isConfirmPasswordValid = (confirmPasswordValue: string) =>
     getValues("password") === confirmPasswordValue;
@@ -37,16 +42,33 @@ export default function Join() {
 
   useEffect(() => {
     if (joinOk && joinData) {
-      // Set user session.
-      sessionStorage.setItem("ACCESS_TOKEN", joinData.token);
-      router.push("/");
-    } else {
-      // Error toast.
-      if (joinError) {
-        console.error("[join]", joinError);
-      }
+      if (!loginLoading)
+        login({
+          data: {
+            email: getValues("email"),
+            password: getValues("password"),
+          },
+        });
     }
-  }, [joinOk, joinData, joinError, joinLoading]);
+
+    if (joinError) {
+      // Error toast.
+      console.error("[join]", joinError);
+    }
+  }, [joinOk, joinData, joinError]);
+
+  useEffect(() => {
+    if (loginOk && loginData) {
+      // Set user session.
+      sessionStorage.setItem("ACCESS_TOKEN", loginData.token);
+      router.replace("/");
+    }
+
+    if (loginError) {
+      // Error toast.
+      console.error("[login]", joinError);
+    }
+  }, [loginOk, loginData, loginError]);
 
   return (
     <MobileLayout seoTitle="회원가입">
