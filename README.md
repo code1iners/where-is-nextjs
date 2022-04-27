@@ -26,6 +26,11 @@ This is a simple geo location service application.
   - [x] Display user by coordinates.
   - [ ] Remove member's marker when unfollow user.
 
+- #### Me.
+
+  - [x] Display following & followed count.
+  - [ ] Followings / Followers detail page.
+
 - #### Users.
 
   - [x] Update user's profile.
@@ -52,5 +57,8 @@ This is a simple geo location service application.
   - [ ] Make sexy input fields.
   - [x] Items of Setting's page UX improvement.
 
+- #### Map.
+  - [ ] Selected member information box.
+  - [ ] User last geolocation updated time.
 - #### Common features.
   - [ ] Back button. (?)

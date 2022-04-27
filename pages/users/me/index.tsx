@@ -76,12 +76,22 @@ export default function Me() {
               </span>
 
               <div className="grid grid-cols-2 gap-2 mt-5 text-xs text-gray-500 tracking-wider cursor-default">
-                <span>
-                  Phone: {data.me.phone ? data.me.phone : "정보 없음"}
-                </span>
-                <span>
-                  Gender: {data.me.gender ? data.me.gender : "정보 없음"}
-                </span>
+                <div className="space-x-1">
+                  <label>Phone:</label>
+                  <span>{data.me.phone ? data.me.phone : "정보 없음"}</span>
+                </div>
+                <div className="space-x-1">
+                  <label>Gender:</label>
+                  <span>{data.me.gender ? data.me.gender : "정보 없음"}</span>
+                </div>
+                <div className="space-x-1">
+                  <label>Followings:</label>
+                  <span>{data.me.following?.length || 0}</span>
+                </div>
+                <div className="space-x-1">
+                  <label>Followers:</label>
+                  <span>{data.me.followed?.length || 0}</span>
+                </div>
               </div>
             </section>
             <section></section>
