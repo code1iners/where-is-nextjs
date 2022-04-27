@@ -36,7 +36,8 @@ This is a simple geo location service application.
   - [x] Remove following & followed.
   - [x] Listing following members.
   - [ ] Draw members in my profile page.
-  - [ ] Improve follow delay.
+  - [x] Improve follow delay.
+  - [ ] Find user pagination.
 
 - #### Responsive web design.
 

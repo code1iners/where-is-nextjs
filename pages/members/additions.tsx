@@ -53,6 +53,14 @@ const Additions: NextPage = () => {
   const onFollowingClick = (id: number) => {
     if (membershipLoading) return;
     membership({ data: { id } });
+
+    const originMembers = [...foundMembers];
+    const updatedMembers = originMembers.map((member) => {
+      if (member.id === id) member.isFollowed = !member.isFollowed;
+      return member;
+    });
+    setFoundMembers(updatedMembers);
+
     try {
     } catch (e) {
       console.error("[onFollowingClick]", e);
