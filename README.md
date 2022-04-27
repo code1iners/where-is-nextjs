@@ -15,6 +15,7 @@ This is a simple geo location service application.
   - [x] User logout.
   - [x] Delete user account.
   - [x] Fix first login error.
+  - [x] Join username length valid check each byte.
 
 - #### Geo location.
 
@@ -35,6 +36,7 @@ This is a simple geo location service application.
   - [x] Remove following & followed.
   - [x] Listing following members.
   - [ ] Draw members in my profile page.
+  - [ ] Improve follow delay.
 
 - #### Responsive web design.
 

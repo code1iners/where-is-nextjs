@@ -8,6 +8,7 @@ import MobileLayout from "@components/mobile-layout";
 import HorizontalDivider from "@components/horizontal-divider";
 import useMutation from "@libs/clients/useMutation";
 import LoadingTextWavy from "@components/loading-text-wavy";
+import useLength from "@libs/clients/useLength";
 
 export interface JoinForm {
   email: string;
@@ -24,6 +25,7 @@ export default function Join() {
     getValues,
   } = useForm<JoinForm>();
   const router = useRouter();
+  const { getStringLength } = useLength();
 
   const [
     join,
@@ -39,6 +41,11 @@ export default function Join() {
 
   const onSubmitValid = (form: JoinForm) => {
     if (!joinLoading) join({ data: form });
+  };
+
+  const isMinLengthValid = (username: string) => {
+    const length = getStringLength(username);
+    return length < 4 ? "Username must have at least 4 digits." : true;
   };
 
   useEffect(() => {
@@ -71,7 +78,7 @@ export default function Join() {
     }
   }, [loginOk, loginData, loginError]);
 
-  if (joinLoading) return <LoadingTextWavy />;
+  if (joinLoading || loginLoading) return <LoadingTextWavy />;
 
   return (
     <MobileLayout seoTitle="회원가입">
@@ -104,14 +111,15 @@ export default function Join() {
               <input
                 {...register("username", {
                   required: "Username is required.",
-                  minLength: {
-                    value: 8,
-                    message: "Username must have at least 8 digits.",
-                  },
+                  // minLength: {
+                  //   value: 8,
+                  //   message: "Username must have at least 8 digits.",
+                  // },
                   maxLength: {
                     value: 16,
                     message: "Username it must be no more than 16 digits.",
                   },
+                  validate: isMinLengthValid,
                 })}
                 className="input-text"
                 type="text"
