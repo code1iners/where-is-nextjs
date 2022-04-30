@@ -1,15 +1,15 @@
-import MobileLayout from "@components/mobile-layout";
-import { useEffect } from "react";
-import useSWR from "swr";
 import Link from "next/link";
 import Image from "next/image";
-import EmptyAvatar from "@components/empty-avatar";
-import useCloudflare from "@libs/clients/useCloudflare";
+import { useEffect } from "react";
+import useSWR from "swr";
 import { User } from "@prisma/client";
+import EmptyAvatar from "@components/empty-avatar";
+import MobileLayout from "@components/mobile-layout";
+import useCloudflare from "@libs/clients/useCloudflare";
 
 export interface CustomUser extends User {
-  following: User[];
-  followed: User[];
+  followings: User[];
+  followers: User[];
 }
 export interface UserMeResult {
   ok: boolean;
@@ -84,14 +84,18 @@ export default function Me() {
                   <label>Gender:</label>
                   <span>{data.me.gender ? data.me.gender : "정보 없음"}</span>
                 </div>
-                <div className="space-x-1">
-                  <label>Followings:</label>
-                  <span>{data.me.following?.length || 0}</span>
-                </div>
-                <div className="space-x-1">
-                  <label>Followers:</label>
-                  <span>{data.me.followed?.length || 0}</span>
-                </div>
+                <Link href="/users/me/follows?access-type=followings">
+                  <a className="space-x-1 cursor-pointer hover:text-black transition">
+                    <label className="cursor-pointer">Followings:</label>
+                    <span>{data.me.followings?.length || 0}</span>
+                  </a>
+                </Link>
+                <Link href="/users/me/follows?access-type=followers">
+                  <a className="space-x-1 cursor-pointer hover:text-black transition">
+                    <label className="cursor-pointer">Followers:</label>
+                    <span>{data.me.followers?.length || 0}</span>
+                  </a>
+                </Link>
               </div>
             </section>
             <section></section>

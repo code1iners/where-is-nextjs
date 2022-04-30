@@ -29,11 +29,12 @@ This is a simple geo location service application.
 - #### Me.
 
   - [x] Display following & followed count.
-  - [ ] Followings / Followers detail page.
+  - [x] Followings / Followers detail page.
 
 - #### Users.
 
   - [x] Update user's profile.
+  - [ ] Retrieve user detail.
 
 - #### Members.
 

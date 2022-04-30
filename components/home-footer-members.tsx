@@ -1,5 +1,5 @@
 import Link from "next/link";
-import UserAvatar from "./user-avatar";
+import UserImageAvatar from "./user-image-avatar";
 import EmptyAvatar from "./empty-avatar";
 import { CustomUser, UserMeResult } from "pages/users/me";
 import { useSetRecoilState } from "recoil";
@@ -36,7 +36,7 @@ const HomeFooterMembers = () => {
       {data ? (
         data?.me?.avatar ? (
           <li key={data?.me?.id}>
-            <UserAvatar
+            <UserImageAvatar
               imageId={data?.me.avatar}
               width={50}
               height={50}
@@ -61,7 +61,7 @@ const HomeFooterMembers = () => {
         ? data?.me?.following.map((user) =>
             user?.avatar ? (
               <li key={user?.id}>
-                <UserAvatar
+                <UserImageAvatar
                   imageId={user?.avatar}
                   width={50}
                   height={50}

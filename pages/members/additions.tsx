@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { User } from "@prisma/client";
 import EmptyAvatar from "@components/empty-avatar";
-import UserAvatar from "@components/user-avatar";
+import UserImageAvatar from "@components/user-image-avatar";
 import LoadingTextWavy from "@components/loading-text-wavy";
 import useMutation from "@libs/clients/useMutation";
 
@@ -38,7 +38,7 @@ const Additions: NextPage = () => {
     setIsSearchLoading(true);
     try {
       const { ok, users, error } = await fetch(
-        `/api/v1/users/search?name=${memberName}`
+        `/api/v1/users/search?q=${memberName}`
       ).then((res) => res.json());
       if (!ok) return console.error("[isFormValid]", error);
 
@@ -141,7 +141,7 @@ const Additions: NextPage = () => {
               >
                 <div className="flex items-center gap-3">
                   {member.avatar ? (
-                    <UserAvatar
+                    <UserImageAvatar
                       imageId={member.avatar}
                       width={40}
                       height={40}

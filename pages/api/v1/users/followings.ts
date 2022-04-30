@@ -31,7 +31,7 @@ const usersFollowings = async (
           const alreadyFollowed = await client.user.findFirst({
             where: {
               id: request.session.user?.id,
-              following: { some: { id } },
+              followings: { some: { id } },
             },
             select: { id: true },
           });
@@ -40,7 +40,7 @@ const usersFollowings = async (
             await client.user.update({
               where: { id: request.session.user?.id },
               data: {
-                following: {
+                followings: {
                   connect: { id },
                 },
               },
@@ -49,7 +49,7 @@ const usersFollowings = async (
             await client.user.update({
               where: { id: request.session.user?.id },
               data: {
-                following: {
+                followings: {
                   disconnect: { id },
                 },
               },

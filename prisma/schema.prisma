@@ -13,20 +13,20 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  name      String
-  password  String
-  phone     String?  @unique
-  email     String?  @unique
-  avatar    String?
-  gender    Gender?
-  isDormant Boolean  @default(true)
-  following User[]   @relation("UserFollow", references: [id])
-  followed  User[]   @relation("UserFollow", references: [id])
-  latitude  Float?
-  longitude Float?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         Int      @id @default(autoincrement())
+  email      String   @unique
+  name       String
+  password   String
+  phone      String?  @unique
+  avatar     String?
+  gender     Gender?
+  isDormant  Boolean  @default(true)
+  followings User[]   @relation("UserFollow", references: [id])
+  followers  User[]   @relation("UserFollow", references: [id])
+  latitude   Float?
+  longitude  Float?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 
 enum Gender {

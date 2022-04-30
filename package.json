@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "db:connect": "pscale connect where-is development --org where-is",
-    "db:push": "npx prisma db push",
+    "db:push": "dotenv -e .env.local -- npx prisma db push",
     "db:studio": "dotenv -e .env.local -- npx prisma studio"
   },
   "dependencies": {

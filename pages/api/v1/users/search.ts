@@ -5,7 +5,9 @@ import withSession from "@libs/servers/withSession";
 import client from "@libs/clients/client";
 
 interface UserSearchQueries {
-  name?: string;
+  q?: string;
+  followers?: boolean;
+  followings?: boolean;
 }
 
 const usersSearch = async (
@@ -13,27 +15,30 @@ const usersSearch = async (
   response: NextApiResponse
 ) => {
   try {
-    const { name }: UserSearchQueries = request.query;
+    const { q, followers, followings }: UserSearchQueries = request.query;
 
     const foundUsers = await client.user.findMany({
       where: {
-        name: { startsWith: name },
+        OR: [{ name: { startsWith: q } }, { email: { startsWith: q } }],
         NOT: { id: request.session.user?.id },
       },
-      include: { followed: true },
+      include: {
+        followers: !!followers,
+        followings: !!followings,
+      },
     });
 
     const parsedUser = foundUsers.map(
-      ({ id, avatar, name, email, followed }) => {
-        const isFollowed = followed.some(
-          (followedUser) => followedUser.id === request.session.user?.id
+      ({ id, avatar, name, email, followers }) => {
+        const isFollowers = followers?.some(
+          (followersUser) => followersUser.id === request.session.user?.id
         );
         return {
           id,
           avatar,
           name,
           email,
-          isFollowed,
+          isFollowers,
         };
       }
     );

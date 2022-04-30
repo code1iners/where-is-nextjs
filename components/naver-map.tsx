@@ -10,6 +10,7 @@ import LoadingTextWavy from "./loading-text-wavy";
 
 const NaverMap = () => {
   const { data } = useSWR<UserMeResult>("/api/v1/users/me");
+
   const [selectedMember, setSelectedMember] =
     useRecoilState(selectedMemberAtom);
   const {
@@ -127,7 +128,7 @@ const NaverMap = () => {
       });
 
       // Draw members.
-      const filteredMembers = data.me.following.filter(
+      const filteredMembers = data?.me.followings.filter(
         (members) => members.latitude && members.longitude
       );
       filteredMembers.forEach((member) => {
