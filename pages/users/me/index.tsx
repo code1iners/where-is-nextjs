@@ -35,7 +35,7 @@ export default function Me() {
             <section className="flex flex-col justify-center items-center mb-5">
               <UserAvatar
                 user={data?.me}
-                wrapperClass="scale-[2.5] p-10 cursor-default"
+                wrapperClass="scale-[2.5] m-10 cursor-default"
               />
 
               <div className="flex items-center gap-2 mt-1">

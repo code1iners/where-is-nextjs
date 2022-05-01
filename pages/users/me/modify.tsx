@@ -11,6 +11,7 @@ import useRandom from "@libs/clients/useRandom";
 import useCloudflare from "@libs/clients/useCloudflare";
 import EmptyAvatar from "@components/empty-avatar";
 import LoadingTextWavy from "@components/loading-text-wavy";
+import UserAvatar from "@components/user-avatar";
 
 interface UserModifyForm {
   email: string | null;
@@ -121,19 +122,12 @@ export default function Modify() {
                       height={120}
                       alt="Avatar"
                     />
-                  ) : data.me.avatar ? (
-                    <Image
-                      className="cursor-pointer rounded-full object-cover"
-                      src={createImageUrl({
-                        imageId: data.me.avatar,
-                        variant: "avatar",
-                      })}
-                      width={120}
-                      height={120}
-                      alt="Avatar"
-                    />
                   ) : (
-                    <EmptyAvatar name={data.me.name} isCursorPointer={true} />
+                    <UserAvatar
+                      wrapperClass="scale-[2.5] m-10 cursor-default"
+                      user={data.me}
+                      hover
+                    />
                   )}
 
                   <input

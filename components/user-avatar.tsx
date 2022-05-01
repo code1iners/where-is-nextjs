@@ -25,7 +25,7 @@ const UserAvatar = ({ user, hover, wrapperClass }: UserAvatarProps) => {
         <div
           className={clazz(
             `w-10 h-10 rounded-full bg-purple-500 flex justify-center items-center text-black ${
-              hover ? "hover:bg-purple-600" : ""
+              hover ? "hover:bg-purple-600 cursor-pointer" : ""
             }`
           )}
         >
