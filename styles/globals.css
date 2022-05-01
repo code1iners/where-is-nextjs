@@ -16,6 +16,7 @@
   }
 }
 
-input::-webkit-calendar-picker-indicator {
+input::-webkit-calendar-picker-indicator,
+input::-webkit-list-button {
   opacity: 0;
 }
