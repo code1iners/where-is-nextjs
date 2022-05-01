@@ -58,7 +58,7 @@ const UsersMeFollows = () => {
           <div>
             <div className="flex items-center relative">
               <input
-                className="input-text"
+                className="input-text grow"
                 {...register("search", {
                   required: "Enter email or username to find user.",
                 })}
