@@ -20,21 +20,25 @@ const UserAvatar = ({
   return (
     <div className={wrapperClass ? clazz(wrapperClass) : ""} onClick={onClick}>
       {user?.avatar ? (
-        <img
+        <div
           className={clazz(
-            "w-10 h-10 rounded-full object-cover",
+            "w-10 h-10",
             hover ? "cursor-pointer" : "cursor-default"
           )}
-          src={createImageUrl({
-            imageId: user.avatar,
-            variant: "avatar",
-          })}
-        />
+        >
+          <img
+            className="w-full h-full object-cover rounded-full"
+            src={createImageUrl({
+              imageId: user.avatar,
+              variant: "avatar",
+            })}
+          />
+        </div>
       ) : (
         <div
           className={clazz(
             `w-10 h-10 rounded-full bg-purple-400 flex justify-center items-center text-black ${
-              hover ? "hover:bg-purple-600 cursor-pointer" : "cursor-default"
+              hover ? "hover:bg-purple-500 cursor-pointer" : "cursor-default"
             }`
           )}
         >

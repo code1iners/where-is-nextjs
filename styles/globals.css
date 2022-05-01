@@ -24,3 +24,14 @@ input::-webkit-calendar-picker-indicator,
 input::-webkit-list-button {
   opacity: 0;
 }
+
+/* hide scrollbar but allow scrolling */
+.no-scrollbar {
+  -ms-overflow-style: none; /* for Internet Explorer, Edge */
+  scrollbar-width: none; /* for Firefox */
+  overflow-y: scroll;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none; /* for Chrome, Safari, and Opera */
+}

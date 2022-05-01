@@ -5,13 +5,14 @@ import { CustomUser, UserMeResult } from "pages/users/me";
 import { useSetRecoilState } from "recoil";
 import { selectedMemberAtom } from "atoms";
 import useSWR from "swr";
+import UserAvatar from "./user-avatar";
 
 const HomeFooterMembers = () => {
   const { data } = useSWR<UserMeResult>("/api/v1/users/me");
   const setSelectedMember = useSetRecoilState(selectedMemberAtom);
 
   return (
-    <ul className="absolute left-3 bottom-3 flex items-center gap-2">
+    <ul className="absolute bottom-3 flex items-center gap-2 w-screen p-2 overflow-x-scroll no-scrollbar">
       <Link href={"/members/additions"}>
         <a>
           <li className="p-2 bg-white rounded-full">
@@ -33,54 +34,12 @@ const HomeFooterMembers = () => {
         </a>
       </Link>
 
-      {data ? (
-        data?.me?.avatar ? (
-          <li key={data?.me?.id}>
-            <UserImageAvatar
-              imageId={data?.me.avatar}
-              width={50}
-              height={50}
-              variant="avatar"
-              alt="Avatar"
-              onClick={() => setSelectedMember(data?.me)}
-            />
-          </li>
-        ) : (
-          <li key={data?.me?.id}>
-            <EmptyAvatar
-              name={data?.me?.name}
-              size="md"
-              isCursorPointer={true}
-              onClick={() => setSelectedMember(data?.me)}
-            />
-          </li>
-        )
-      ) : null}
+      {data ? <UserAvatar user={data?.me} hover /> : null}
 
       {data?.me?.followings?.length
-        ? data?.me?.followings.map((user) =>
-            user?.avatar ? (
-              <li key={user?.id}>
-                <UserImageAvatar
-                  imageId={user?.avatar}
-                  width={50}
-                  height={50}
-                  variant="avatar"
-                  alt="Avatar"
-                  onClick={() => setSelectedMember(user)}
-                />
-              </li>
-            ) : (
-              <li key={user?.id}>
-                <EmptyAvatar
-                  name={user?.name}
-                  size="md"
-                  isCursorPointer={true}
-                  onClick={() => setSelectedMember(user)}
-                />
-              </li>
-            )
-          )
+        ? data?.me?.followings.map((user) => (
+            <UserAvatar key={user.id} user={user} hover />
+          ))
         : null}
     </ul>
   );
