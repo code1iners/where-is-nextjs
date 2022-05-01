@@ -24,7 +24,3 @@ input::-webkit-calendar-picker-indicator,
 input::-webkit-list-button {
   opacity: 0;
 }
-
-input::-webkit-tap-highlight-color {
-  color: transparent;
-}

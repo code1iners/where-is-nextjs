@@ -105,21 +105,21 @@ const Additions: NextPage = () => {
         <h1 className="text-lg tracking-wider">멤버 추가</h1>
         {/* Search */}
         <form
-          className="flex justify-between items-center border rounded-md w-full px-4 py-2"
+          className="flex justify-between items-center border rounded-md w-full"
           onSubmit={handleSubmit(isFormValid)}
         >
           <input
             {...register("memberName", {
               required: "Member name is required.",
             })}
-            className="focus:outline-0 flex-grow"
+            className="focus:outline-0 grow px-4 py-2"
             type="text"
             placeholder="Search.."
             autoCapitalize="off"
             autoComplete="off"
             required
           />
-          <button type="submit">
+          <button type="submit" className="absolute right-8">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-5 w-5 cursor-pointer"
