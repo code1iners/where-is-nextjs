@@ -73,7 +73,7 @@ const UsersMeFollows = () => {
 
               <datalist id="user-list">
                 {filteredUsers?.map((user) => (
-                  <option value={user.name} />
+                  <option key={user.id} value={user.name} />
                 ))}
               </datalist>
 
@@ -136,6 +136,7 @@ const UsersMeFollows = () => {
               {filteredUsers?.length ? (
                 filteredUsers?.map((user) => (
                   <Link
+                    key={user.id}
                     href={{
                       pathname: `/users/${user.id}`,
                       query: {
