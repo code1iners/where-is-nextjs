@@ -57,8 +57,8 @@ const HomeFooterMembers = () => {
         )
       ) : null}
 
-      {data?.me?.following?.length
-        ? data?.me?.following.map((user) =>
+      {data?.me?.followings?.length
+        ? data?.me?.followings.map((user) =>
             user?.avatar ? (
               <li key={user?.id}>
                 <UserImageAvatar
