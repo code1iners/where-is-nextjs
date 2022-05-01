@@ -8,17 +8,21 @@ import EmptyAvatar from "@components/empty-avatar";
 import UserImageAvatar from "@components/user-image-avatar";
 import LoadingTextWavy from "@components/loading-text-wavy";
 import useMutation from "@libs/clients/useMutation";
+import UserAvatar from "@components/user-avatar";
+import { useRouter } from "next/router";
 
 interface MemberSearchForm {
   memberName: string;
 }
 
 interface Member extends User {
-  isFollowed: boolean;
+  isFollower: boolean;
 }
 
 const Additions: NextPage = () => {
-  const { register, handleSubmit, getValues } = useForm<MemberSearchForm>();
+  const router = useRouter();
+
+  const { register, handleSubmit } = useForm<MemberSearchForm>();
   const [foundMembers, setFoundMembers] = useState<Member[]>([]);
   const [isSearchLoading, setIsSearchLoading] = useState(false);
   const [
@@ -42,6 +46,8 @@ const Additions: NextPage = () => {
       ).then((res) => res.json());
       if (!ok) return console.error("[isFormValid]", error);
 
+      console.log(users);
+
       setFoundMembers(users);
     } catch (e) {
       console.error("[isFormValid]", e);
@@ -51,17 +57,16 @@ const Additions: NextPage = () => {
   };
 
   const onFollowingClick = (id: number) => {
-    if (membershipLoading) return;
-    membership({ data: { id } });
-
-    const originMembers = [...foundMembers];
-    const updatedMembers = originMembers.map((member) => {
-      if (member.id === id) member.isFollowed = !member.isFollowed;
-      return member;
-    });
-    setFoundMembers(updatedMembers);
-
     try {
+      if (membershipLoading) return;
+      membership({ data: { id } });
+
+      const originMembers = [...foundMembers];
+      const updatedMembers = originMembers.map((member) => {
+        if (member.id === id) member.isFollower = !member.isFollower;
+        return member;
+      });
+      setFoundMembers(updatedMembers);
     } catch (e) {
       console.error("[onFollowingClick]", e);
     }
@@ -77,7 +82,7 @@ const Additions: NextPage = () => {
         const foundMemberIndex = previous.findIndex(
           (member) => member.id === id
         );
-        previous[foundMemberIndex].isFollowed = isFollowing;
+        previous[foundMemberIndex].isFollower = isFollowing;
         return [...previous];
       });
     }
@@ -86,6 +91,12 @@ const Additions: NextPage = () => {
       console.error(membershipError);
     }
   }, [membershipOk, membershipData, membershipError]);
+
+  const onMemberClick = (member: User) =>
+    router.push({
+      pathname: `/users/${member.id}`,
+      query: { name: member.name },
+    });
 
   return (
     <MobileLayout seoTitle="Member additions">
@@ -140,33 +151,30 @@ const Additions: NextPage = () => {
                 key={member.id}
               >
                 <div className="flex items-center gap-3">
-                  {member.avatar ? (
-                    <UserImageAvatar
-                      imageId={member.avatar}
-                      width={40}
-                      height={40}
-                      variant="avatar"
-                      alt="Avatar"
-                    />
-                  ) : (
-                    <EmptyAvatar name={member.name} size="sm" />
-                  )}
+                  <UserAvatar
+                    user={member}
+                    onClick={() => onMemberClick(member)}
+                    hover
+                  />
 
-                  <div className="flex flex-col">
-                    <span className="tracking-wider text-md cursor-default">
+                  <div
+                    className="flex flex-col"
+                    onClick={() => onMemberClick(member)}
+                  >
+                    <span className="tracking-wider text-md cursor-pointer">
                       {member.name}
                     </span>
-                    <span className="tracking-wider text-gray-400 text-sm cursor-default">
+                    <span className="tracking-wider text-gray-400 text-sm cursor-pointer">
                       {member.email}
                     </span>
                   </div>
                 </div>
                 {/* Add member button */}
                 <button onClick={() => onFollowingClick(member.id)}>
-                  {member.isFollowed ? (
+                  {member.isFollower ? (
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      className="h-7 w-7 border border-purple-500 p-1 rounded-md hover:bg-purple-500 hover:text-white transition"
+                      className="h-7 w-7 border border-red-500 p-1 rounded-md hover:bg-red-500 hover:text-white transition"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"

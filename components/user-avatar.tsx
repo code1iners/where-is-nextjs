@@ -6,16 +6,25 @@ interface UserAvatarProps {
   user: User;
   hover?: boolean;
   wrapperClass?: string;
+  onClick?: () => void;
 }
 
-const UserAvatar = ({ user, hover, wrapperClass }: UserAvatarProps) => {
+const UserAvatar = ({
+  user,
+  hover,
+  wrapperClass,
+  onClick,
+}: UserAvatarProps) => {
   const { createImageUrl } = useCloudflare();
 
   return (
-    <div className={wrapperClass ? clazz(wrapperClass) : ""}>
+    <div className={wrapperClass ? clazz(wrapperClass) : ""} onClick={onClick}>
       {user?.avatar ? (
         <img
-          className="w-10 h-10 rounded-full object-cover"
+          className={clazz(
+            "w-10 h-10 rounded-full object-cover",
+            hover ? "cursor-pointer" : "cursor-default"
+          )}
           src={createImageUrl({
             imageId: user.avatar,
             variant: "avatar",
@@ -24,12 +33,17 @@ const UserAvatar = ({ user, hover, wrapperClass }: UserAvatarProps) => {
       ) : (
         <div
           className={clazz(
-            `w-10 h-10 rounded-full bg-purple-500 flex justify-center items-center text-black ${
-              hover ? "hover:bg-purple-600 cursor-pointer" : ""
+            `w-10 h-10 rounded-full bg-purple-400 flex justify-center items-center text-black ${
+              hover ? "hover:bg-purple-600 cursor-pointer" : "cursor-default"
             }`
           )}
         >
-          <span className="font-bold text-lg">
+          <span
+            className={clazz(
+              "font-bold text-lg",
+              hover ? "cursor-pointer" : "cursor-default"
+            )}
+          >
             {user.name[0].toUpperCase()}
           </span>
         </div>

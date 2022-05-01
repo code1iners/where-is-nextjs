@@ -36,6 +36,7 @@ This is a simple geo location service application.
 
   - [x] Update user's profile.
   - [ ] Retrieve user detail.
+  - [ ] User unfollow service.
 
 - #### Members.
 
@@ -45,6 +46,8 @@ This is a simple geo location service application.
   - [ ] Draw members in my profile page.
   - [x] Improve follow delay.
   - [ ] Find user pagination.
+  - [x] Linking with retrieve user in additions.
+  - [x] Improve visibility user follow button in additions.
 
 - #### Responsive web design.
 

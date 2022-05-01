@@ -10,7 +10,7 @@ const useNaverMap = () => {
     new naver.maps.Marker(options);
 
   const makeCircleMarkerIconContentByName = (name: string, ...rest: any) => {
-    const displayName = name.length ? name[0].toUpperCase() : null;
+    const displayName = name?.length ? name[0].toUpperCase() : null;
     return `<div
               class="rounded-full object-cover bg-purple-400 hover:bg-purple-500 flex justify-center items-center transition hover:scale-105 font-bold text-xl"
               style="width:50px;height:50px;" ${{ ...rest }}>

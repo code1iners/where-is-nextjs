@@ -15,7 +15,7 @@ const usersSearch = async (
   response: NextApiResponse
 ) => {
   try {
-    const { q, followers, followings }: UserSearchQueries = request.query;
+    const { q }: UserSearchQueries = request.query;
 
     const foundUsers = await client.user.findMany({
       where: {
@@ -23,14 +23,13 @@ const usersSearch = async (
         NOT: { id: request.session.user?.id },
       },
       include: {
-        followers: !!followers,
-        followings: !!followings,
+        followers: true,
       },
     });
 
     const parsedUser = foundUsers.map(
       ({ id, avatar, name, email, followers }) => {
-        const isFollowers = followers?.some(
+        const isFollower = followers?.some(
           (followersUser) => followersUser.id === request.session.user?.id
         );
         return {
@@ -38,14 +37,14 @@ const usersSearch = async (
           avatar,
           name,
           email,
-          isFollowers,
+          isFollower,
         };
       }
     );
 
     return response.status(200).json({
       ok: true,
-      users: parsedUser || [],
+      users: parsedUser ?? [],
     });
   } catch (e) {
     console.error("[usersSearch]", e);
