@@ -106,25 +106,24 @@ const UsersMeFollows = () => {
           {/* Tabs */}
           <div className="flex justify-around items-center border-black relative">
             <button
-              onClick={() => onTabClick("followers")}
-              className="p-2 grow border-b transition-all"
-            >
-              Followers
-            </button>
-            <button
               onClick={() => onTabClick("followings")}
               className="p-2 grow border-b transition-all"
             >
               Followings
             </button>
+            <button
+              onClick={() => onTabClick("followers")}
+              className="p-2 grow border-b transition-all"
+            >
+              Followers
+            </button>
             <div
               className={clazz(`
                 w-1/2 absolute bottom-0 h-[1px] bg-purple-500 transition-all 
-
                 ${
                   accessType === "followers"
-                    ? "-translate-x-1/2"
-                    : "translate-x-1/2"
+                    ? "translate-x-1/2"
+                    : "-translate-x-1/2"
                 }
               `)}
             ></div>
