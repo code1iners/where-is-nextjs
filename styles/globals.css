@@ -15,3 +15,7 @@
     @apply p-2 cursor-pointer transition-all hover:text-lg;
   }
 }
+
+input::-webkit-calendar-picker-indicator {
+  opacity: 0;
+}

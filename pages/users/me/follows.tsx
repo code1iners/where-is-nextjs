@@ -1,5 +1,4 @@
 import MobileLayout from "@components/mobile-layout";
-import UserAvatar from "@components/user-avatar";
 import clazz from "@libs/clients/clazz";
 import { User } from "@prisma/client";
 import { useRouter } from "next/router";
@@ -7,8 +6,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import useSWR from "swr";
 import { UserMeResult } from "@pages/users/me";
-import Link from "next/link";
-import { userInfo } from "os";
+import UserHorizontalItem from "@components/user-horizontal-item";
 
 type AccessType = "followings" | "followers";
 interface FollowSearchForm {
@@ -23,21 +21,22 @@ const UsersMeFollows = () => {
   const onTabClick = (accessType: AccessType) => setAccessType(accessType);
   const { data } = useSWR<UserMeResult>("/api/v1/users/me");
   const [filteredUsers, setFilteredUsers] = useState<User[]>();
+  const [typedUsers, setTypedUsers] = useState<User[]>();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<FollowSearchForm>();
+  const { register, watch, getValues } = useForm<FollowSearchForm>();
 
-  const isFormValid = async ({ search }: FollowSearchForm) => {
-    try {
-      console.log(search);
-    } catch (e) {
-      console.error("[isFormValid]", e);
-    } finally {
+  // Watch search keyword
+  useEffect(() => {
+    const searched = getValues("search");
+    if (filteredUsers?.length && !!searched) {
+      const typedUsers = filteredUsers.filter((user) =>
+        user.name?.toLowerCase().startsWith(searched)
+      );
+      setTypedUsers(typedUsers);
+    } else {
+      setTypedUsers([]);
     }
-  };
+  }, [watch("search"), filteredUsers]);
 
   useEffect(() => {
     switch (accessType) {
@@ -56,7 +55,7 @@ const UsersMeFollows = () => {
       <article className="space-y-5">
         {/* Search */}
         <section className="w-full">
-          <form onSubmit={handleSubmit(isFormValid)}>
+          <div>
             <div className="flex items-center relative">
               <input
                 className="input-text"
@@ -94,12 +93,7 @@ const UsersMeFollows = () => {
                 </svg>
               </button>
             </div>
-            {errors?.search ? (
-              <span className="block mt-2 mx-2 error-message">
-                {errors.search.message}
-              </span>
-            ) : null}
-          </form>
+          </div>
         </section>
 
         <section className="border border-gray-500 rounded-md">
@@ -132,53 +126,21 @@ const UsersMeFollows = () => {
           {/* User list */}
           <div>
             <ul>
-              {filteredUsers?.length ? (
+              {getValues("search") ? (
+                typedUsers?.length ? (
+                  typedUsers?.map((user) => (
+                    <UserHorizontalItem key={user.id} user={user} />
+                  ))
+                ) : (
+                  <div className="flex justify-center items-center p-4">
+                    <h1 className="text-gray-400 text-sm tracking-wider">
+                      Does not found any users.
+                    </h1>
+                  </div>
+                )
+              ) : filteredUsers?.length ? (
                 filteredUsers?.map((user) => (
-                  <Link
-                    key={user.id}
-                    href={{
-                      pathname: `/users/${user.id}`,
-                      query: {
-                        name: user.name,
-                      },
-                    }}
-                  >
-                    <a>
-                      <li
-                        key={user.id}
-                        className="p-2 flex justify-between items-center hover:text-purple-500"
-                      >
-                        <div className="flex space-x-2 items-center grow cursor-pointer">
-                          <UserAvatar user={user} />
-
-                          <div className="flex flex-col justify-center">
-                            <span className="text-sm text-gray-400">
-                              {user.email}
-                            </span>
-                            <span className="text-sm tracking-wider">
-                              {user.name}
-                            </span>
-                          </div>
-                        </div>
-                        <div className="cursor-pointer">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-6 w-6"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M13 7l5 5m0 0l-5 5m5-5H6"
-                            />
-                          </svg>
-                        </div>
-                      </li>
-                    </a>
-                  </Link>
+                  <UserHorizontalItem key={user.id} user={user} />
                 ))
               ) : (
                 <div className="flex justify-center items-center p-4">
