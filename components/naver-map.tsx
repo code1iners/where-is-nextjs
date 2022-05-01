@@ -38,7 +38,7 @@ const NaverMap = () => {
   ] = useMutation("/api/v1/users/me/modify");
 
   useEffect(() => {
-    const watchID = navigator.geolocation.watchPosition(
+    navigator.geolocation.getCurrentPosition(
       ({ coords }) => {
         if (updateCoordsLoading) return;
         updateCoords({
@@ -54,7 +54,7 @@ const NaverMap = () => {
       { enableHighAccuracy: true }
     );
     return () => {
-      navigator.geolocation.clearWatch(watchID);
+      // navigator.geolocation.clearWatch(watchID);
     };
   }, []);
 
