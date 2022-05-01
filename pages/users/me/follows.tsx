@@ -30,7 +30,7 @@ const UsersMeFollows = () => {
     const searched = getValues("search");
     if (filteredUsers?.length && !!searched) {
       const typedUsers = filteredUsers.filter((user) =>
-        user.name?.toLowerCase().startsWith(searched)
+        user.name?.toLowerCase().startsWith(searched.toLowerCase())
       );
       setTypedUsers(typedUsers);
     } else {
