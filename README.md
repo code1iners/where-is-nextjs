@@ -63,3 +63,4 @@ This is a simple geo location service application.
   - [ ] User last geolocation updated time.
 - #### Common features.
   - [ ] Back button. (?)
+  - [ ] Development page access control.

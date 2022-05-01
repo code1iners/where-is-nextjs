@@ -6,6 +6,7 @@ import { User } from "@prisma/client";
 import EmptyAvatar from "@components/empty-avatar";
 import MobileLayout from "@components/mobile-layout";
 import useCloudflare from "@libs/clients/useCloudflare";
+import UserAvatar from "@components/user-avatar";
 
 export interface CustomUser extends User {
   followings: User[];
@@ -32,22 +33,10 @@ export default function Me() {
           <>
             {/* Avatar. */}
             <section className="flex flex-col justify-center items-center mb-5">
-              {data.me.avatar ? (
-                <div className="rounded-full overflow-hidden hover:scale-105 transition flex justify-center items-center">
-                  <Image
-                    className="object-cover"
-                    src={createImageUrl({
-                      imageId: data.me.avatar,
-                      variant: "avatar",
-                    })}
-                    width={120}
-                    height={120}
-                    alt="Avatar"
-                  />
-                </div>
-              ) : (
-                <EmptyAvatar name={data.me.name} />
-              )}
+              <UserAvatar
+                user={data?.me}
+                wrapperClass="scale-[2.5] p-10 cursor-default"
+              />
 
               <div className="flex items-center gap-2 mt-1">
                 <h1 className="text-xl tracking-wider">{data.me.name}</h1>
