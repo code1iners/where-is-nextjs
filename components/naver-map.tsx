@@ -37,9 +37,9 @@ const NaverMap = () => {
     },
   ] = useMutation("/api/v1/users/me/modify");
 
-  useEffect(
-    () =>
-      navigator.geolocation.getCurrentPosition(({ coords }) => {
+  useEffect(() => {
+    const watchID = navigator.geolocation.watchPosition(
+      ({ coords }) => {
         if (updateCoordsLoading) return;
         updateCoords({
           method: "PATCH",
@@ -49,9 +49,14 @@ const NaverMap = () => {
           },
         });
         setCoords(coords);
-      }),
-    []
-  );
+      },
+      (error) => console.error(error),
+      { enableHighAccuracy: true }
+    );
+    return () => {
+      navigator.geolocation.clearWatch(watchID);
+    };
+  }, []);
 
   useEffect(() => {
     if (updateCoordsOk) {
@@ -178,7 +183,7 @@ const NaverMap = () => {
 
       markers.forEach((marker: any) => {
         if (marker.data.id === selectedMember.id) {
-          marker.setZIndex(50);
+          marker.setZIndex(100);
         } else {
           marker.setZIndex(0);
         }
