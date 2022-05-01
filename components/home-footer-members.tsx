@@ -38,7 +38,12 @@ const HomeFooterMembers = () => {
 
       {data?.me?.followings?.length
         ? data?.me?.followings.map((user) => (
-            <UserAvatar key={user.id} user={user} hover />
+            <UserAvatar
+              key={user.id}
+              user={user}
+              onClick={() => setSelectedMember(user)}
+              hover
+            />
           ))
         : null}
     </ul>
