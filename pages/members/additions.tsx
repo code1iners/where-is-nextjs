@@ -46,8 +46,6 @@ const Additions: NextPage = () => {
       ).then((res) => res.json());
       if (!ok) return console.error("[isFormValid]", error);
 
-      console.log(users);
-
       setFoundMembers(users);
     } catch (e) {
       console.error("[isFormValid]", e);

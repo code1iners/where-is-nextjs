@@ -23,7 +23,7 @@ const UserHorizontalItem = ({ user }: UserHorizontalItemProps) => {
           className="p-2 flex justify-between items-center hover:text-purple-500"
         >
           <div className="flex space-x-2 items-center grow cursor-pointer">
-            <UserAvatar user={user} />
+            <UserAvatar user={user} hover />
 
             <div className="flex flex-col justify-center">
               <span className="text-sm text-gray-400">{user.email}</span>
