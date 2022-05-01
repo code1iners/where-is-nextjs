@@ -26,6 +26,7 @@ const NaverMap = () => {
   const [coords, setCoords] = useState<GeolocationCoordinates>();
   const [naverMapCenter, setNaverMapCenter] = useState<naver.maps.LatLng>();
   const [naverMap, setNaverMap] = useState<naver.maps.Map>();
+  const [markers, setMarkers] = useState<naver.maps.Marker[]>([]);
 
   const [
     updateCoords,
@@ -103,6 +104,8 @@ const NaverMap = () => {
 
   useEffect(() => {
     if (onLoaded && data && naverMapCenter) {
+      setMarkers([]);
+
       // Draw me.
       const myMarker = createMarker({
         map: naverMap,
@@ -123,13 +126,14 @@ const NaverMap = () => {
         zIndex: 100,
       });
       myMarker.set("data", data.me);
+      setMarkers((previous) => [...previous, myMarker]);
       naver.maps.Event.addListener(myMarker, "click", (e) => {
         setSelectedMember(data.me);
       });
 
       // Draw members.
       const filteredMembers = data?.me.followings.filter(
-        (members) => members.latitude && members.longitude
+        (members) => !!members.latitude && !!members.longitude
       );
       filteredMembers.forEach((member) => {
         const center = createPosition(
@@ -137,7 +141,7 @@ const NaverMap = () => {
           Number(member.longitude)
         );
 
-        const marker = createMarker({
+        const memberMarker: any = createMarker({
           map: naverMap,
           position: center.destinationPoint(90, 15),
           title: member.name,
@@ -152,8 +156,13 @@ const NaverMap = () => {
               : makeCircleMarkerIconContentByName(member?.name),
           },
         });
-        marker.set("data", member);
-        naver.maps.Event.addListener(marker, "click", (e) => {
+
+        memberMarker.set("data", member);
+        memberMarker.set("id", `marker-user-${member.id}`);
+
+        setMarkers((previous) => [...previous, memberMarker]);
+
+        naver.maps.Event.addListener(memberMarker, "click", (e) => {
           setSelectedMember(member);
         });
       });
@@ -166,8 +175,16 @@ const NaverMap = () => {
       const center = new naver.maps.LatLng(Number(latitude), Number(longitude));
       naverMap.setCenter(center);
       naverMap.panBy(new naver.maps.Point(35, 30));
+
+      markers.forEach((marker: any) => {
+        if (marker.data.id === selectedMember.id) {
+          marker.setZIndex(50);
+        } else {
+          marker.setZIndex(0);
+        }
+      });
     }
-  }, [naverMap, selectedMember]);
+  }, [naverMap, selectedMember, markers]);
 
   return (
     <section

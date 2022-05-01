@@ -65,6 +65,14 @@ This is a simple geo location service application.
 - #### Map.
   - [ ] Selected member information box.
   - [ ] User last geolocation updated time.
+  - [ ] Refresh geolocation me and members.
+  - [x] Update z-index when click avatar of user.
 - #### Common features.
+
   - [ ] Back button. (?)
   - [ ] Development page access control.
+  - [ ] Toast message box.
+
+- #### Settings.
+  - [ ] Confirm followers.
+  - [ ] Update my location.
