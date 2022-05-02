@@ -31,6 +31,7 @@ This is a simple geo location service application.
   - [x] Display following & followed count.
   - [x] Followings / Followers detail page.
   - [ ] Avatar update loading delay time.
+  - [ ] Delete unnecessary image in cloudflare.
 
 - #### Users.
 

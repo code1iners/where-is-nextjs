@@ -46,7 +46,6 @@ const findUserById = async (
       isFollowing,
     };
 
-    // console.log(request.body);
     return response.status(200).json({
       ok: true,
       data,

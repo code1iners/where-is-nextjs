@@ -144,7 +144,7 @@ const NaverMap = () => {
       });
 
       // Draw members.
-      const filteredMembers = data?.me.followings.filter(
+      const filteredMembers = data?.me?.followings.filter(
         (members) => !!members.latitude && !!members.longitude
       );
       filteredMembers.forEach((member) => {

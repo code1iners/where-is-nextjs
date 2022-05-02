@@ -29,7 +29,6 @@ export default function Modify() {
   const [modify, { ok: modifyOk, error: modifyError, loading: modifyLoading }] =
     useMutation("/api/v1/users/me/modify");
   const { createRandomString } = useRandom();
-  const { createImageUrl } = useCloudflare();
 
   const isValid = async (form: UserModifyForm) => {
     // Is loading?
@@ -52,15 +51,25 @@ export default function Modify() {
         form.append(
           "file",
           file,
-          `/where-is/users/${data.me.id}/avatars/${createRandomString()}-${
-            file.name
-          }`
+          `/where-is/${process.env.NODE_ENV}/users/${
+            data.me.id
+          }/avatars/${createRandomString()}-${file.name}`
         );
 
         const { result: uploadedResult } = await fetch(uploadUrl?.uploadURL, {
           method: "POST",
           body: form,
         }).then((res) => res.json());
+
+        if (uploadedResult?.id && originData?.avatar) {
+          await fetch(`/api/v1/cloudflares/images/urls`, {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ imageId: data.me.avatar }),
+          }).then((res) => res.json());
+        }
 
         newData["avatar"] = uploadedResult?.id;
       }

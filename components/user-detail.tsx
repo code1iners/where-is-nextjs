@@ -44,7 +44,6 @@ const UserDetail = ({ user, me }: UserDetailProps) => {
 
   useEffect(() => {
     if (followOk && followData) {
-      console.log(followOk, followData);
       const { isFollowing } = followData;
       setIsFollowing(isFollowing);
     }
