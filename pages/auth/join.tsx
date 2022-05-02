@@ -23,6 +23,7 @@ export default function Join() {
     register,
     formState: { errors },
     getValues,
+    setError
   } = useForm<JoinForm>();
   const router = useRouter();
   const { getStringLength } = useLength();
@@ -62,6 +63,10 @@ export default function Join() {
     if (joinError) {
       // Error toast.
       console.error("[join]", joinError);
+      
+      setError("email", {
+        message:joinError.message
+      })
     }
   }, [joinOk, joinData, joinError]);
 
