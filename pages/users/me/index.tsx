@@ -25,7 +25,7 @@ export default function Me() {
   return (
     <MobileLayout seoTitle="내 정보">
       <article className="flex flex-col divide-y">
-        {data ? <UserDetail user={data?.me} isMe={true} /> : null}
+        {data ? <UserDetail user={data?.me} /> : null}
       </article>
     </MobileLayout>
   );

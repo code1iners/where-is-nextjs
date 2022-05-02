@@ -11,7 +11,6 @@ const UserRetrieve = () => {
 
   const { data: foundUser } = useSWR(`/api/v1/users/${id}`);
   const { data: meData } = useSWR(`/api/v1/users/me`);
-  console.log(meData?.me?.id, foundUser?.data?.id);
 
   if (!foundUser) return <LoadingTextWavy />;
 
@@ -19,10 +18,7 @@ const UserRetrieve = () => {
     <MobileLayout seoTitle={(name as string) ?? "User Retrieve"}>
       <article className="flex flex-col divide-y">
         {foundUser?.ok ? (
-          <UserDetail
-            user={foundUser?.data}
-            isMe={foundUser?.data?.id === meData?.me?.id}
-          />
+          <UserDetail user={foundUser?.data} me={meData?.me} />
         ) : (
           <section
             className="flex justify-center items-center cursor-pointer hover:text-purple-500"

@@ -14,10 +14,6 @@
   .list-item {
     @apply p-2 cursor-pointer transition-all hover:text-lg;
   }
-
-  .border-none {
-    @apply -webkit-tap-highlight-color;
-  }
 }
 
 input::-webkit-calendar-picker-indicator,

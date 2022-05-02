@@ -24,7 +24,7 @@ This is a simple geo location service application.
   - [x] Set marker with location.
   - [x] Update user's coordinates.
   - [x] Display user by coordinates.
-  - [ ] Remove member's marker when unfollow user.
+  - [x] Remove member's marker when unfollow user.
 
 - #### Me.
 
@@ -35,8 +35,8 @@ This is a simple geo location service application.
 - #### Users.
 
   - [x] Update user's profile.
-  - [ ] Retrieve user detail.
-  - [ ] User unfollow service.
+  - [x] Retrieve user detail.
+  - [x] User unfollow service.
 
 - #### Members.
 
@@ -67,6 +67,7 @@ This is a simple geo location service application.
   - [ ] User last geolocation updated time.
   - [ ] Refresh geolocation me and members.
   - [x] Update z-index when click avatar of user.
+  - [x] Clear previous markers.
 - #### Common features.
 
   - [ ] Back button. (?)

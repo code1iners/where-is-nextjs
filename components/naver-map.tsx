@@ -26,6 +26,7 @@ const NaverMap = () => {
   const [coords, setCoords] = useState<GeolocationCoordinates>();
   const [naverMapCenter, setNaverMapCenter] = useState<naver.maps.LatLng>();
   const [naverMap, setNaverMap] = useState<naver.maps.Map>();
+  const [myMarker, setMyMarker] = useState<naver.maps.Marker>();
   const [markers, setMarkers] = useState<naver.maps.Marker[]>([]);
 
   const [
@@ -109,6 +110,7 @@ const NaverMap = () => {
 
   useEffect(() => {
     if (onLoaded && data && naverMapCenter) {
+      markers.forEach((marker) => marker.setMap(null));
       setMarkers([]);
 
       // Draw me.
@@ -179,7 +181,7 @@ const NaverMap = () => {
       const { latitude, longitude } = selectedMember;
       const center = new naver.maps.LatLng(Number(latitude), Number(longitude));
       naverMap.setCenter(center);
-      naverMap.panBy(new naver.maps.Point(35, 30));
+      naverMap.panBy(new naver.maps.Point(30, 30));
 
       markers.forEach((marker: any) => {
         if (marker.data.id === selectedMember.id) {
