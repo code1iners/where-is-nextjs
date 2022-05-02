@@ -4,7 +4,7 @@ const useNaverMap = () => {
 
   const createMap = (
     options: naver.maps.MapOptions | undefined
-  ): naver.maps.Map => new naver.maps.Map("map", options);
+  ): naver.maps.Map => new naver.maps.Map("naverMap", options);
 
   const createMarker = (options: naver.maps.MarkerOptions): naver.maps.Marker =>
     new naver.maps.Marker(options);

@@ -63,8 +63,8 @@ This is a simple geo location service application.
   - [x] Items of Setting's page UX improvement.
 
 - #### Map.
-  - [ ] Selected member information box.
-  - [ ] User last geolocation updated time.
+  - [x] Selected member information box.
+  - [x] User last geolocation updated time.
   - [ ] Refresh geolocation me and members.
   - [x] Update z-index when click avatar of user.
   - [x] Clear previous markers.

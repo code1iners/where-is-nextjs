@@ -18,6 +18,7 @@ const usersMe = async (request: NextApiRequest, response: NextApiResponse) => {
         gender: true,
         latitude: true,
         longitude: true,
+        updatedAt: true,
         followings: {
           select: {
             id: true,
@@ -25,6 +26,7 @@ const usersMe = async (request: NextApiRequest, response: NextApiResponse) => {
             name: true,
             latitude: true,
             longitude: true,
+            updatedAt: true,
           },
         },
         followers: {
@@ -34,6 +36,7 @@ const usersMe = async (request: NextApiRequest, response: NextApiResponse) => {
             name: true,
             latitude: true,
             longitude: true,
+            updatedAt: true,
           },
         },
       },
