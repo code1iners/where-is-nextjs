@@ -142,7 +142,7 @@ const Additions: NextPage = () => {
     <MobileLayout seoTitle="Member additions">
       <header className="flex flex-col items-center">
         {/* Title */}
-        <h1 className="text-lg tracking-wider">멤버 추가</h1>
+        <h1 className="text-lg tracking-wider mb-3">멤버 추가</h1>
         {/* Search */}
         <form
           className="flex justify-between items-center border rounded-md w-full"
@@ -152,7 +152,7 @@ const Additions: NextPage = () => {
             {...register("memberName", {
               required: "Member name is required.",
             })}
-            className="focus:outline-0 grow px-4 py-2"
+            className="grow px-4 py-2 focus:outline-purple-400"
             type="text"
             placeholder="Search.."
             autoCapitalize="off"
