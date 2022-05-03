@@ -16,7 +16,7 @@ const UserHorizontalFollowItem = ({
   onFollowClick,
 }: UserHorizontalFollowItemProps) => {
   return (
-    <div className="flex justify-between items-center pt-1" key={user.id}>
+    <div className="flex justify-between items-center pt-1">
       <div className="flex items-center gap-3">
         <UserAvatar user={user} onClick={onItemClick} hover />
 

@@ -166,6 +166,7 @@ const Additions: NextPage = () => {
             <div className="flex flex-col gap-3 divide-y">
               {foundMembers.map((member) => (
                 <UserHorizontalFollowItem
+                  key={member.id}
                   user={member}
                   isFollowLoading={membershipLoading}
                   onItemClick={() => onMemberClick(member)}
