@@ -30,7 +30,7 @@ This is a simple geo location service application.
 
   - [x] Display following & followed count.
   - [x] Followings / Followers detail page.
-  - [ ] Avatar update loading delay time.
+  - [x] Avatar update loading delay time.
   - [x] Delete unnecessary image in cloudflare when update user avatar.
 
 - #### Users.
@@ -69,7 +69,8 @@ This is a simple geo location service application.
   - [ ] Refresh geolocation me and members.
   - [x] Update z-index when click avatar of user.
   - [x] Clear previous markers.
-- #### Common features.
+  - [ ] Naver map load only once.
+- #### Common features (Optional).
 
   - [ ] Back button. (?)
   - [ ] Development page access control.

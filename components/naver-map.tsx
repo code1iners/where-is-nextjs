@@ -3,14 +3,13 @@ import { useEffect, useRef, useState } from "react";
 import useSWR from "swr";
 import { useRecoilState } from "recoil";
 import { selectedMemberAtom } from "atoms";
-import { motion, AnimatePresence } from "framer-motion";
 import { UserMeResult } from "@pages/users/me";
 import LoadingTextWavy from "@components/loading-text-wavy";
 import useCloudflare from "@libs/clients/useCloudflare";
 import useNaverMap from "@libs/clients/useNaverMap";
 import useMutation from "@libs/clients/useMutation";
 import clazz from "@libs/clients/clazz";
-import usePrisma from "@libs/clients/usePrisma";
+import MapUserInfoBox from "./map-user-info-box";
 
 const NaverMap = () => {
   const { data } = useSWR<UserMeResult>("/api/v1/users/me");
@@ -25,7 +24,6 @@ const NaverMap = () => {
     makeCircleMarkerIconContentByUrl,
   } = useNaverMap();
   const { createImageUrl } = useCloudflare();
-  const { convertDate } = usePrisma();
   const naverMapRef = useRef(null);
   const [onLoaded, setOnLoaded] = useState(false);
   const [coords, setCoords] = useState<GeolocationCoordinates>();
@@ -215,80 +213,11 @@ const NaverMap = () => {
       ></section>
 
       {/* Modals */}
-      <AnimatePresence>
-        {onLoaded && selectedMember ? (
-          <motion.div
-            initial={{
-              scale: 0,
-              rotate: 90,
-            }}
-            animate={{
-              scale: 1,
-              rotate: 0,
-            }}
-            transition={{
-              type: "spring",
-              stiffness: 260,
-              damping: 20,
-            }}
-            exit={{
-              scale: 0,
-              rotate: 90,
-            }}
-            className="absolute left-2 top-2 rounded-md py-1 px-2 bg-white border border-black cursor-default"
-          >
-            <div className="flex justify-between items-center text-gray-600">
-              <Link
-                href={{
-                  pathname: `/users/${selectedMember.id}`,
-                  query: { name: selectedMember.name },
-                }}
-              >
-                <div className="flex justify-start items-center space-x-1 cursor-pointer hover:text-purple-500 hover:scale-105 transition-transform">
-                  <span className="">{selectedMember.name}</span>
-
-                  <a>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M13 9l3 3m0 0l-3 3m3-3H8m13 0a9 9 0 11-18 0 9 9 0 0118 0z"
-                      />
-                    </svg>
-                  </a>
-                </div>
-              </Link>
-              <svg
-                onClick={() => setSelectedMember(undefined)}
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 cursor-pointer hover:text-purple-500 hover:scale-110 transition-transform"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-            </div>
-            <div className="text-xs space-x-1 text-gray-500">
-              <span>Last access</span>
-              <span>:</span>
-              <span className="">{convertDate(selectedMember.updatedAt)}</span>
-            </div>
-          </motion.div>
-        ) : null}
-      </AnimatePresence>
+      <MapUserInfoBox
+        isVisible={Boolean(onLoaded && selectedMember)}
+        user={selectedMember}
+        onCloseClick={() => setSelectedMember(undefined)}
+      />
     </article>
   );
 };
