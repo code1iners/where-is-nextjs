@@ -10,6 +10,7 @@ import { UserMeResult } from ".";
 import useRandom from "@libs/clients/useRandom";
 import LoadingTextWavy from "@components/loading-text-wavy";
 import UserAvatar from "@components/user-avatar";
+import { useRouter } from "next/router";
 
 interface UserModifyForm {
   email: string | null;
@@ -53,7 +54,7 @@ export default function Modify() {
           form.append(
             "file",
             file,
-            `/where-is/${process.env.NODE_ENV}/users/${
+            `/${location.hostname}/users/${
               data.me.id
             }/avatars/${createRandomString()}-${file.name}`
           );
