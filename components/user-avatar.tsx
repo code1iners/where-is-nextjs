@@ -5,7 +5,10 @@ import { User } from "@prisma/client";
 interface UserAvatarProps {
   user: User;
   hover?: boolean;
+  needBaam?: boolean;
+  needReverseY?: boolean;
   wrapperClass?: string;
+  index?: number;
   onClick?: () => void;
 }
 
@@ -14,6 +17,9 @@ const UserAvatar = ({
   hover,
   wrapperClass,
   onClick,
+  needBaam,
+  needReverseY,
+  index,
 }: UserAvatarProps) => {
   const { createImageUrl } = useCloudflare();
 
@@ -23,7 +29,10 @@ const UserAvatar = ({
         <div
           className={clazz(
             "w-10 h-10",
-            hover ? "cursor-pointer" : "cursor-default"
+            hover ? "cursor-pointer" : "cursor-default",
+            needBaam ? "animate-baam" : "",
+            needReverseY ? "animate-reverse-y" : "",
+            index ? `animation-delay-${index + 1}00` : ""
           )}
         >
           <img
@@ -37,9 +46,11 @@ const UserAvatar = ({
       ) : (
         <div
           className={clazz(
-            `w-10 h-10 rounded-full bg-purple-400 flex justify-center items-center text-black ${
-              hover ? "hover:bg-purple-500 cursor-pointer" : "cursor-default"
-            }`
+            "w-10 h-10 rounded-full bg-purple-400 flex justify-center items-center text-black",
+            hover ? "hover:bg-purple-500 cursor-pointer" : "cursor-default",
+            needBaam ? "animate-baam" : "",
+            needReverseY ? "animate-reverse-y" : "",
+            index ? `animation-delay-${index + 1}00` : ""
           )}
         >
           <span

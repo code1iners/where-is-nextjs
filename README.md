@@ -66,7 +66,7 @@ This is a simple geo location service application.
 - #### Map.
   - [x] Selected member information box.
   - [x] User last geolocation updated time.
-  - [ ] Refresh geolocation me and members.
+  - [x] Refresh geolocation me and members.
   - [x] Update z-index when click avatar of user.
   - [x] Clear previous markers.
   - [ ] Naver map load only once.

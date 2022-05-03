@@ -6,6 +6,7 @@ import { useSetRecoilState } from "recoil";
 import { selectedMemberAtom } from "atoms";
 import useSWR from "swr";
 import UserAvatar from "./user-avatar";
+import clazz from "@libs/clients/clazz";
 
 const HomeFooterMembers = () => {
   const { data } = useSWR<UserMeResult>("/api/v1/users/me");
@@ -40,17 +41,20 @@ const HomeFooterMembers = () => {
           user={data.me}
           onClick={() => setSelectedMember(data.me)}
           hover
+          needReverseY
         />
       ) : null}
 
       {/* Members */}
       {data?.me?.followings?.length
-        ? data?.me?.followings.map((user) => (
+        ? data?.me?.followings.map((user, index) => (
             <UserAvatar
               key={user.id}
               user={user}
               onClick={() => setSelectedMember(user)}
+              index={index}
               hover
+              needReverseY
             />
           ))
         : null}

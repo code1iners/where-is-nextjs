@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import useSWR from "swr";
 import { useRecoilState } from "recoil";
@@ -12,7 +11,7 @@ import clazz from "@libs/clients/clazz";
 import MapUserInfoBox from "./map-user-info-box";
 
 const NaverMap = () => {
-  const { data } = useSWR<UserMeResult>("/api/v1/users/me");
+  const { data, mutate: meMutate } = useSWR<UserMeResult>("/api/v1/users/me");
 
   const [selectedMember, setSelectedMember] =
     useRecoilState(selectedMemberAtom);
@@ -58,6 +57,7 @@ const NaverMap = () => {
     );
     return () => {
       // navigator.geolocation.clearWatch(watchID);
+      removeMarkers();
       setSelectedMember(undefined);
     };
   }, []);
@@ -111,13 +111,17 @@ const NaverMap = () => {
     };
   }, [naverMapRef]);
 
+  const removeMarkers = () => {
+    markers.forEach((marker) => marker.setMap(null));
+    setMarkers([]);
+  };
+
   useEffect(() => {
     if (onLoaded && data && naverMapCenter) {
-      markers.forEach((marker) => marker.setMap(null));
-      setMarkers([]);
+      removeMarkers();
 
       // Draw me.
-      const myMarker = createMarker({
+      const myMarker: any = createMarker({
         map: naverMap,
         position: createPosition(
           data.me?.latitude ?? naverMapCenter.lat(),
@@ -136,6 +140,7 @@ const NaverMap = () => {
         zIndex: 100,
       });
       myMarker.set("data", data.me);
+      myMarker.eventTarget?.classList.add("animate-baam");
       setMarkers((previous) => [...previous, myMarker]);
       naver.maps.Event.addListener(myMarker, "click", (e) => {
         setSelectedMember(data.me);
@@ -145,7 +150,7 @@ const NaverMap = () => {
       const filteredMembers = data?.me?.followings.filter(
         (members) => !!members.latitude && !!members.longitude
       );
-      filteredMembers.forEach((member) => {
+      filteredMembers.forEach((member, index) => {
         const center = createPosition(
           Number(member.latitude),
           Number(member.longitude)
@@ -169,6 +174,10 @@ const NaverMap = () => {
 
         memberMarker.set("data", member);
         memberMarker.set("id", `marker-user-${member.id}`);
+        memberMarker.eventTarget?.classList.add("animate-baam");
+        memberMarker.eventTarget?.classList.add(
+          `animation-delay-${index + 1}00`
+        );
 
         setMarkers((previous) => [...previous, memberMarker]);
 
@@ -196,6 +205,17 @@ const NaverMap = () => {
     }
   }, [naverMap, selectedMember, markers]);
 
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const onRefreshClick = () => {
+    setIsRefreshing(true);
+    meMutate();
+    new Promise<boolean>((resolve) => {
+      setTimeout(() => {
+        resolve(false);
+      }, Math.floor(Math.random() * 1000));
+    }).then(setIsRefreshing);
+  };
+
   return (
     <article>
       <section className={clazz(onLoaded ? "invisible" : "visible")}>
@@ -211,6 +231,32 @@ const NaverMap = () => {
           height: "100vh",
         }}
       ></section>
+
+      {/* Floating action buttons */}
+      <div className="absolute right-5 bottom-20 bg-white rounded-full">
+        <button
+          className={clazz(
+            "flex justify-center items-center p-1 waving-hand",
+            isRefreshing ? "animate-spin-reverse" : ""
+          )}
+          onClick={onRefreshClick}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+            />
+          </svg>
+        </button>
+      </div>
 
       {/* Modals */}
       <MapUserInfoBox
