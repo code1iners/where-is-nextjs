@@ -8,8 +8,6 @@ import { useForm } from "react-hook-form";
 import useSWR from "swr";
 import { UserMeResult } from ".";
 import useRandom from "@libs/clients/useRandom";
-import useCloudflare from "@libs/clients/useCloudflare";
-import EmptyAvatar from "@components/empty-avatar";
 import LoadingTextWavy from "@components/loading-text-wavy";
 import UserAvatar from "@components/user-avatar";
 
@@ -29,56 +27,65 @@ export default function Modify() {
   const [modify, { ok: modifyOk, error: modifyError, loading: modifyLoading }] =
     useMutation("/api/v1/users/me/modify");
   const { createRandomString } = useRandom();
+  const [isLoading, setIsLoading] = useState(false);
 
   const isValid = async (form: UserModifyForm) => {
-    // Is loading?
-    if (modifyLoading) return;
+    try {
+      // Is loading?
+      if (modifyLoading) return;
 
-    const originData: any = { ...data?.me };
-    delete originData.id;
-    const newData: any = { ...form };
+      setIsLoading(true);
 
-    // Image process.
-    // Getting cloudflare images upload direct url.
-    if (avatarPreview) {
-      const { ok: hasUploadUrl, result: uploadUrl } = await fetch(
-        "/api/v1/cloudflares/images/urls"
-      ).then((res) => res.json());
-      if (hasUploadUrl && avatar?.length && data) {
-        const file = avatar[0] as File;
+      const originData: any = { ...data?.me };
+      delete originData.id;
+      const newData: any = { ...form };
 
-        const form = new FormData();
-        form.append(
-          "file",
-          file,
-          `/where-is/${process.env.NODE_ENV}/users/${
-            data.me.id
-          }/avatars/${createRandomString()}-${file.name}`
-        );
+      // Image process.
+      // Getting cloudflare images upload direct url.
+      if (avatarPreview) {
+        const { ok: hasUploadUrl, result: uploadUrl } = await fetch(
+          "/api/v1/cloudflares/images/urls"
+        ).then((res) => res.json());
+        if (hasUploadUrl && avatar?.length && data) {
+          const file = avatar[0] as File;
 
-        const { result: uploadedResult } = await fetch(uploadUrl?.uploadURL, {
-          method: "POST",
-          body: form,
-        }).then((res) => res.json());
+          const form = new FormData();
+          form.append(
+            "file",
+            file,
+            `/where-is/${process.env.NODE_ENV}/users/${
+              data.me.id
+            }/avatars/${createRandomString()}-${file.name}`
+          );
 
-        if (uploadedResult?.id && originData?.avatar) {
-          await fetch(`/api/v1/cloudflares/images/urls`, {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ imageId: data.me.avatar }),
+          const { result: uploadedResult } = await fetch(uploadUrl?.uploadURL, {
+            method: "POST",
+            body: form,
           }).then((res) => res.json());
+
+          if (uploadedResult?.id && originData?.avatar) {
+            await fetch(`/api/v1/cloudflares/images/urls`, {
+              method: "DELETE",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ imageId: data.me.avatar }),
+            }).then((res) => res.json());
+          }
+
+          newData["avatar"] = uploadedResult?.id;
         }
-
-        newData["avatar"] = uploadedResult?.id;
       }
+
+      const result: UserModifyForm = objectComparator(originData, newData);
+
+      if (result) modify({ data: result, method: "PATCH" });
+      else alert("There is no change.");
+    } catch (e) {
+      console.error("[modify]", e);
+    } finally {
+      setIsLoading(false);
     }
-
-    const result: UserModifyForm = objectComparator(originData, newData);
-
-    if (result) modify({ data: result, method: "PATCH" });
-    else alert("There is no change.");
   };
 
   useEffect(() => {
@@ -109,7 +116,7 @@ export default function Modify() {
     }
   }, [avatar]);
 
-  if (modifyLoading) return <LoadingTextWavy />;
+  if (modifyLoading || isLoading) return <LoadingTextWavy />;
 
   return (
     <MobileLayout seoTitle="">
