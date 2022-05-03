@@ -196,7 +196,7 @@ const Additions: NextPage = () => {
                   </svg>
                 ) : (
                   <button
-                    className="text-purple-500 tracking-widest hover:scale-110 hover:text-purple-600 transition-transform"
+                    className="w-full text-purple-500 tracking-widest hover:scale-110 hover:text-purple-600 transition-transform"
                     onClick={onMoreClick}
                   >
                     more
