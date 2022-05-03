@@ -6,6 +6,7 @@ import client from "@libs/clients/client";
 
 interface UserSearchQueries {
   q?: string;
+  lastId?: string;
   followers?: boolean;
   followings?: boolean;
 }
@@ -15,9 +16,21 @@ const usersSearch = async (
   response: NextApiResponse
 ) => {
   try {
-    const { q }: UserSearchQueries = request.query;
+    const { q, lastId }: UserSearchQueries = request.query;
+
+    // Compose cursor options.
+    const cursorOptions = lastId
+      ? {
+          skip: 1,
+          cursor: {
+            ...(lastId && { id: +lastId }),
+          },
+        }
+      : undefined;
 
     const foundUsers = await client.user.findMany({
+      ...cursorOptions,
+      take: 10,
       where: {
         OR: [{ name: { startsWith: q } }, { email: { startsWith: q } }],
         NOT: { id: request.session.user?.id },
