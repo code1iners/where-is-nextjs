@@ -33,6 +33,21 @@ const Additions: NextPage = () => {
     },
   ] = useMutation("/api/v1/users/followings");
 
+  useEffect(() => {
+    document.addEventListener("scroll", onScrollChange);
+
+    return () => {
+      document.removeEventListener("scroll", onScrollChange);
+    };
+  }, []);
+
+  const [isMoveTopVisible, setIsMoveTopVisible] = useState(false);
+  const onScrollChange = (e: Event) => {
+    const top = window.pageYOffset || document.documentElement.scrollTop;
+    if (top > 100) setIsMoveTopVisible(true);
+    else setIsMoveTopVisible(false);
+  };
+
   const isFormValid = async ({ memberName }: MemberSearchForm) => {
     // Is loading?
     if (isSearchLoading) return;
@@ -116,8 +131,15 @@ const Additions: NextPage = () => {
     }
   };
 
+  const onMoveTopClick = () => {
+    window.scrollTo({
+      behavior: "smooth",
+      top: 0,
+    });
+  };
+
   return (
-    <MobileLayout seoTitle="Member additions" className="h-screen">
+    <MobileLayout seoTitle="Member additions">
       <header className="flex flex-col items-center">
         {/* Title */}
         <h1 className="text-lg tracking-wider">멤버 추가</h1>
@@ -158,7 +180,7 @@ const Additions: NextPage = () => {
 
       <HorizontalDivider margin="sm" />
 
-      <article className="h-4/5 overflow-y-scroll no-scrollbar border border-gray-2200 rounded-md px-3 py-2">
+      <article className="border border-gray-2200 rounded-md px-3 py-2">
         <section>
           {isSearchLoading ? (
             <LoadingTextWavy />
@@ -196,10 +218,10 @@ const Additions: NextPage = () => {
                   </svg>
                 ) : (
                   <button
-                    className="w-full text-purple-500 tracking-widest hover:scale-110 hover:text-purple-600 transition-transform"
+                    className="w-full text-purple-500 tracking-widest hover:bg-purple-400 hover:text-white transition-colors border border-purple-500 rounded-md p-2"
                     onClick={onMoreClick}
                   >
-                    more
+                    more..
                   </button>
                 )}
               </div>
@@ -211,6 +233,28 @@ const Additions: NextPage = () => {
           )}
         </section>
       </article>
+
+      {isMoveTopVisible ? (
+        <button
+          className="fixed bottom-5 right-5 border border-purple-500 rounded-md p-2 hover:bg-purple-400 hover:text-white transition-colors bg-white"
+          onClick={onMoveTopClick}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M5 11l7-7 7 7M5 19l7-7 7 7"
+            />
+          </svg>
+        </button>
+      ) : null}
     </MobileLayout>
   );
 };
