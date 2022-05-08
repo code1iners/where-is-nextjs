@@ -1,13 +1,17 @@
-import Link from "next/link";
 import { useEffect } from "react";
 import useSWR from "swr";
-import { User } from "@prisma/client";
+import { Location, User } from "@prisma/client";
 import MobileLayout from "@components/mobile-layout";
 import UserDetail from "@components/user-detail";
 
+export interface UserWithLocations extends User {
+  locations: Location[];
+}
+
 export interface CustomUser extends User {
-  followings: User[];
-  followers: User[];
+  followings: UserWithLocations[];
+  followers: UserWithLocations[];
+  locations: Location[];
 }
 export interface UserMeResult {
   ok: boolean;

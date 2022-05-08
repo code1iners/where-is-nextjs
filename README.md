@@ -76,6 +76,10 @@ This is a simple geo location service application.
   - [ ] Development page access control.
   - [ ] Toast message box.
 
+- #### Geolocation
+
+  - [x] Create geolocation model.
+
 - #### Settings.
   - [ ] Confirm followers.
   - [ ] Update my location.

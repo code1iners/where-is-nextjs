@@ -12,7 +12,7 @@ const usersModify = async (
     // Check user.
     const foundUser = await client.user.findUnique({
       where: { id: request.session.user?.id },
-      select: { id: true },
+      select: { id: true, locations: true },
     });
     if (!foundUser) {
       return response.status(404).json({
@@ -32,8 +32,28 @@ const usersModify = async (
         phone: request.body?.phone,
         gender: request.body?.gender,
         avatar: request.body?.avatar,
-        latitude: request.body?.latitude,
-        longitude: request.body?.longitude,
+        locations: {
+          create: {
+            latitude: request.body?.latitude,
+            longitude: request.body?.longitude,
+          },
+        },
+      },
+    });
+
+    // Data which 1 week ago will be deleted.
+    const now = new Date();
+    await client.location.deleteMany({
+      where: {
+        userId: foundUser.id,
+        createdAt: {
+          lt: new Date(
+            `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(
+              2,
+              "0"
+            )}-${String(now.getDate() - 7).padStart(2, "0")}`
+          ),
+        },
       },
     });
 

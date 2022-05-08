@@ -9,6 +9,7 @@ import useNaverMap from "@libs/clients/useNaverMap";
 import useMutation from "@libs/clients/useMutation";
 import clazz from "@libs/clients/clazz";
 import MapUserInfoBox from "./map-user-info-box";
+import useLocation from "@libs/clients/useLocation";
 
 const NaverMap = () => {
   const { data, mutate: meMutate } = useSWR<UserMeResult>("/api/v1/users/me");
@@ -23,6 +24,7 @@ const NaverMap = () => {
     makeCircleMarkerIconContentByUrl,
   } = useNaverMap();
   const { createImageUrl } = useCloudflare();
+  const { getLastCoordinates } = useLocation();
   const naverMapRef = useRef(null);
   const [onLoaded, setOnLoaded] = useState(false);
   const [coords, setCoords] = useState<GeolocationCoordinates>();
@@ -120,88 +122,104 @@ const NaverMap = () => {
     if (onLoaded && data && naverMapCenter) {
       removeMarkers();
 
-      // Draw me.
-      const myMarker: any = createMarker({
-        map: naverMap,
-        position: createPosition(
-          data.me?.latitude ?? naverMapCenter.lat(),
-          data.me?.longitude ?? naverMapCenter.lng()
-        ),
-        icon: {
-          content: data.me?.avatar
-            ? makeCircleMarkerIconContentByUrl(
-                createImageUrl({
-                  imageId: data.me?.avatar + "",
-                  variant: "avatar",
-                })
-              )
-            : makeCircleMarkerIconContentByName(data.me?.name),
-        },
-        zIndex: 100,
-      });
-      myMarker.set("data", data.me);
-      myMarker.eventTarget?.classList.add("animate-baam");
-      setMarkers((previous) => [...previous, myMarker]);
-      naver.maps.Event.addListener(myMarker, "click", (e) => {
-        setSelectedMember(data.me);
-      });
+      // Parse locations.
 
-      // Draw members.
-      const filteredMembers = data?.me?.followings.filter(
-        (members) => !!members.latitude && !!members.longitude
-      );
-      filteredMembers.forEach((member, index) => {
-        const center = createPosition(
-          Number(member.latitude),
-          Number(member.longitude)
-        );
-
-        const memberMarker: any = createMarker({
+      const myCoordinates = getLastCoordinates(data.me.locations);
+      if (myCoordinates) {
+        const { latitude, longitude } = myCoordinates;
+        // Draw me.
+        const myMarker: any = createMarker({
           map: naverMap,
-          position: center.destinationPoint(90, 15),
-          title: member.name,
+          position: createPosition(
+            latitude ?? naverMapCenter.lat(),
+            longitude ?? naverMapCenter.lng()
+          ),
           icon: {
-            content: member.avatar
+            content: data.me?.avatar
               ? makeCircleMarkerIconContentByUrl(
                   createImageUrl({
-                    imageId: member.avatar + "",
+                    imageId: data.me?.avatar + "",
                     variant: "avatar",
                   })
                 )
-              : makeCircleMarkerIconContentByName(member?.name),
+              : makeCircleMarkerIconContentByName(data.me?.name),
           },
+          zIndex: 100,
         });
-
-        memberMarker.set("data", member);
-        memberMarker.set("id", `marker-user-${member.id}`);
-        memberMarker.eventTarget?.classList.add("animate-baam");
-        memberMarker.eventTarget?.classList.add(
-          `animation-delay-${index + 1}00`
-        );
-
-        setMarkers((previous) => [...previous, memberMarker]);
-
-        naver.maps.Event.addListener(memberMarker, "click", (e) => {
-          setSelectedMember(member);
+        myMarker.set("data", data.me);
+        myMarker.eventTarget?.classList.add("animate-baam");
+        setMarkers((previous) => [...previous, myMarker]);
+        naver.maps.Event.addListener(myMarker, "click", (e) => {
+          setSelectedMember(data.me);
         });
+      }
+
+      // Draw members.
+      const filteredMembers = data?.me?.followings.filter((members) =>
+        Boolean(getLastCoordinates(members.locations))
+      );
+
+      filteredMembers.forEach((member, index) => {
+        const memberLastCoord = getLastCoordinates(member.locations);
+        if (memberLastCoord) {
+          const center = createPosition(
+            Number(memberLastCoord.latitude),
+            Number(memberLastCoord.longitude)
+          );
+
+          const memberMarker: any = createMarker({
+            map: naverMap,
+            position: center.destinationPoint(90, 15),
+            title: member.name,
+            icon: {
+              content: member.avatar
+                ? makeCircleMarkerIconContentByUrl(
+                    createImageUrl({
+                      imageId: member.avatar + "",
+                      variant: "avatar",
+                    })
+                  )
+                : makeCircleMarkerIconContentByName(member?.name),
+            },
+          });
+
+          memberMarker.set("data", member);
+          memberMarker.set("id", `marker-user-${member.id}`);
+          memberMarker.eventTarget?.classList.add("animate-baam");
+          memberMarker.eventTarget?.classList.add(
+            `animation-delay-${index + 1}00`
+          );
+
+          setMarkers((previous) => [...previous, memberMarker]);
+
+          naver.maps.Event.addListener(memberMarker, "click", (e) => {
+            setSelectedMember(member);
+          });
+        }
       });
     }
   }, [onLoaded, data, naverMapCenter]);
 
   useEffect(() => {
     if (naverMap && selectedMember) {
-      const { latitude, longitude } = selectedMember;
-      const center = new naver.maps.LatLng(Number(latitude), Number(longitude));
-      naverMap.setCenter(center);
-      naverMap.panBy(new naver.maps.Point(30, 30));
+      const { locations } = selectedMember;
+      const coords = getLastCoordinates(locations);
+      if (coords) {
+        const center = new naver.maps.LatLng(
+          Number(coords.latitude),
+          Number(coords.longitude)
+        );
+        naverMap.setCenter(center);
+        naverMap.panBy(new naver.maps.Point(30, 30));
 
-      markers.forEach((marker: any) => {
-        if (marker.data.id === selectedMember.id) {
-          marker.setZIndex(100);
-        } else {
-          marker.setZIndex(0);
-        }
-      });
+        markers.forEach((marker: any) => {
+          if (marker.data.id === selectedMember.id) {
+            marker.setZIndex(100);
+          } else {
+            marker.setZIndex(0);
+          }
+        });
+      }
     }
   }, [naverMap, selectedMember, markers]);
 

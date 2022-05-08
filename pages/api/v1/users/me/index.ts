@@ -16,16 +16,13 @@ const usersMe = async (request: NextApiRequest, response: NextApiResponse) => {
         email: true,
         avatar: true,
         gender: true,
-        latitude: true,
-        longitude: true,
         updatedAt: true,
         followings: {
           select: {
             id: true,
             avatar: true,
             name: true,
-            latitude: true,
-            longitude: true,
+            locations: true,
             updatedAt: true,
           },
         },
@@ -34,10 +31,12 @@ const usersMe = async (request: NextApiRequest, response: NextApiResponse) => {
             id: true,
             avatar: true,
             name: true,
-            latitude: true,
-            longitude: true,
+            locations: true,
             updatedAt: true,
           },
+        },
+        locations: {
+          orderBy: { createdAt: "desc" },
         },
       },
     });
