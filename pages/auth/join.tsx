@@ -23,7 +23,7 @@ export default function Join() {
     register,
     formState: { errors },
     getValues,
-    setError
+    setError,
   } = useForm<JoinForm>();
   const router = useRouter();
   const { getStringLength } = useLength();
@@ -63,10 +63,10 @@ export default function Join() {
     if (joinError) {
       // Error toast.
       console.error("[join]", joinError);
-      
+
       setError("email", {
-        message:joinError.message
-      })
+        message: joinError.message,
+      });
     }
   }, [joinOk, joinData, joinError]);
 
@@ -106,9 +106,7 @@ export default function Join() {
                 required
               />
               {errors.email ? (
-                <span className="error-message text-sm">
-                  {errors.email.message}
-                </span>
+                <span className="error-message">{errors.email.message}</span>
               ) : null}
             </div>
 
@@ -116,10 +114,10 @@ export default function Join() {
               <input
                 {...register("username", {
                   required: "Username is required.",
-                  // minLength: {
-                  //   value: 8,
-                  //   message: "Username must have at least 8 digits.",
-                  // },
+                  minLength: {
+                    value: 8,
+                    message: "Username must have at least 8 digits.",
+                  },
                   maxLength: {
                     value: 16,
                     message: "Username it must be no more than 16 digits.",
@@ -134,9 +132,7 @@ export default function Join() {
                 required
               />
               {errors.username ? (
-                <span className="error-message text-sm">
-                  {errors.username.message}
-                </span>
+                <span className="error-message">{errors.username.message}</span>
               ) : null}
             </div>
 
@@ -155,9 +151,7 @@ export default function Join() {
                 required
               />
               {errors.password ? (
-                <span className="error-message text-sm">
-                  {errors.password.message}
-                </span>
+                <span className="error-message">{errors.password.message}</span>
               ) : null}
             </div>
 
@@ -176,11 +170,9 @@ export default function Join() {
               />
               {errors.confirmPassword ? (
                 errors.confirmPassword.type === "isConfirmPasswordValid" ? (
-                  <span className="error-message text-sm">
-                    Password is not same.
-                  </span>
+                  <span className="error-message">Password is not same.</span>
                 ) : (
-                  <span className="error-message text-sm">
+                  <span className="error-message">
                     {errors.confirmPassword.message}
                   </span>
                 )

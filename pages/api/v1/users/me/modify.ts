@@ -24,20 +24,65 @@ const usersModify = async (
       });
     }
 
+    const {
+      email,
+      name,
+      phone,
+      gender,
+      avatar,
+      latitude,
+      longitude,
+      receiveOfferReaction,
+      sendOfferResponse,
+    } = request.body;
+    const locations = latitude &&
+      longitude && {
+        create: {
+          latitude,
+          longitude,
+        },
+      };
+
+    // Parse receive follow offers.
+    const receiveFollowingOffers =
+      receiveOfferReaction && receiveOfferReaction.targetUserId
+        ? {
+            disconnect: {
+              id: receiveOfferReaction.targetUserId,
+            },
+          }
+        : undefined;
+    const followers =
+      receiveOfferReaction && receiveOfferReaction.isAgree
+        ? {
+            connect: {
+              id: receiveOfferReaction.targetUserId,
+            },
+          }
+        : undefined;
+
+    // Parse send follow offers.
+    const sendFollowingOffers =
+      sendOfferResponse && sendOfferResponse.targetUserId
+        ? {
+            disconnect: {
+              id: sendOfferResponse.targetUserId,
+            },
+          }
+        : undefined;
+
     await client.user.update({
       where: { id: foundUser.id },
       data: {
-        email: request.body?.email,
-        name: request.body?.name,
-        phone: request.body?.phone,
-        gender: request.body?.gender,
-        avatar: request.body?.avatar,
-        locations: {
-          create: {
-            latitude: request.body?.latitude,
-            longitude: request.body?.longitude,
-          },
-        },
+        ...(email && { email }),
+        ...(name && { name }),
+        ...(phone && { phone }),
+        ...(gender && { gender }),
+        ...(avatar && { avatar }),
+        ...(locations && { locations }),
+        ...(followers && { followers }),
+        ...(receiveFollowingOffers && { receiveFollowingOffers }),
+        ...(sendFollowingOffers && { sendFollowingOffers }),
       },
     });
 

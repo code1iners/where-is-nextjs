@@ -14,7 +14,7 @@ interface MemberSearchForm {
 }
 
 export interface Member extends User {
-  isFollower: boolean;
+  followStatus?: "FOLLOW" | "UNFOLLOW" | "PENDING";
 }
 
 const Additions: NextPage = () => {
@@ -24,12 +24,12 @@ const Additions: NextPage = () => {
   const [foundMembers, setFoundMembers] = useState<Member[]>([]);
   const [isSearchLoading, setIsSearchLoading] = useState(false);
   const [
-    membership,
+    follow,
     {
-      ok: membershipOk,
-      data: membershipData,
-      error: membershipError,
-      loading: membershipLoading,
+      ok: followOk,
+      data: followData,
+      error: followError,
+      loading: followLoading,
     },
   ] = useMutation("/api/v1/users/followings");
 
@@ -67,41 +67,40 @@ const Additions: NextPage = () => {
     }
   };
 
-  const onFollowingClick = (id: number) => {
+  const onFollowingClick = (member: Member, index: number) => {
     try {
-      if (membershipLoading) return;
-      membership({ data: { id } });
+      if (followLoading) return;
 
-      const originMembers = [...foundMembers];
-      const updatedMembers = originMembers.map((member) => {
-        if (member.id === id) member.isFollower = !member.isFollower;
-        return member;
-      });
-      setFoundMembers(updatedMembers);
+      follow({ data: { id: member.id } });
+
+      // console.log(index, member.followStatus);
+
+      // setFoundMembers([...foundMembers]);
     } catch (e) {
       console.error("[onFollowingClick]", e);
     }
   };
 
   useEffect(() => {
-    if (membershipOk && membershipData) {
+    if (followOk && followData) {
       const {
-        isFollowing,
+        followStatus,
         targetUser: { id },
-      } = membershipData;
+      } = followData;
+
       setFoundMembers((previous) => {
         const foundMemberIndex = previous.findIndex(
           (member) => member.id === id
         );
-        previous[foundMemberIndex].isFollower = isFollowing;
+        previous[foundMemberIndex].followStatus = followStatus;
         return [...previous];
       });
     }
 
-    if (membershipError) {
-      console.error(membershipError);
+    if (followError) {
+      console.error(followError);
     }
-  }, [membershipOk, membershipData, membershipError]);
+  }, [followOk, followData, followError]);
 
   const onMemberClick = (member: User) =>
     router.push({
@@ -145,7 +144,7 @@ const Additions: NextPage = () => {
         <h1 className="text-lg tracking-wider mb-3">멤버 추가</h1>
         {/* Search */}
         <form
-          className="flex justify-between items-center border rounded-md w-full"
+          className="flex justify-between items-center border rounded-md w-full shadow-md"
           onSubmit={handleSubmit(isFormValid)}
         >
           <input
@@ -180,59 +179,63 @@ const Additions: NextPage = () => {
 
       <HorizontalDivider margin="sm" />
 
-      <article className="border border-gray-2200 rounded-md px-3 py-2">
-        <section>
-          {isSearchLoading ? (
-            <LoadingTextWavy />
-          ) : foundMembers.length ? (
-            <div className="flex flex-col gap-3 divide-y">
-              {foundMembers.map((member) => (
-                <UserHorizontalFollowItem
-                  key={member.id}
-                  user={member}
-                  isFollowLoading={membershipLoading}
-                  onItemClick={() => onMemberClick(member)}
-                  onFollowClick={() => onFollowingClick(member.id)}
-                />
-              ))}
-              <div className="pt-2 flex justify-center items-center">
-                {isMoreLoading ? (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6 animate-spin"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-                    />
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                    />
-                  </svg>
-                ) : (
-                  <button
-                    className="w-full text-purple-500 tracking-widest hover:bg-purple-400 hover:text-white transition-colors border border-purple-500 rounded-md p-2"
-                    onClick={onMoreClick}
-                  >
-                    more..
-                  </button>
-                )}
+      {isSearchLoading ? (
+        <div>
+          <LoadingTextWavy />
+        </div>
+      ) : (
+        <article className="border border-gray-2200 rounded-md px-3 py-2 shadow-md">
+          <section>
+            {foundMembers.length ? (
+              <div className="flex flex-col gap-3 divide-y">
+                {foundMembers.map((member, index) => (
+                  <UserHorizontalFollowItem
+                    key={member.id}
+                    user={member}
+                    isFollowLoading={followLoading}
+                    onItemClick={() => onMemberClick(member)}
+                    onFollowClick={() => onFollowingClick(member, index)}
+                  />
+                ))}
+                <div className="pt-2 flex justify-center items-center">
+                  {isMoreLoading ? (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-6 w-6 animate-spin"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                      />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                      />
+                    </svg>
+                  ) : (
+                    <button
+                      className="w-full text-purple-500 tracking-widest hover:bg-purple-400 hover:text-white transition-colors border border-purple-500 rounded-md p-2"
+                      onClick={onMoreClick}
+                    >
+                      more..
+                    </button>
+                  )}
+                </div>
               </div>
-            </div>
-          ) : (
-            <span className="flex justify-center m-20 text-gray-400 tracking-widest text-sm cursor-default whitespace-nowrap hover:scale-105 transition">
-              Try find member to follow.
-            </span>
-          )}
-        </section>
-      </article>
+            ) : (
+              <span className="flex justify-center m-20 text-gray-400 tracking-widest text-sm cursor-default whitespace-nowrap hover:scale-105 transition">
+                Try find member to follow.
+              </span>
+            )}
+          </section>
+        </article>
+      )}
 
       {isMoveTopVisible ? (
         <button

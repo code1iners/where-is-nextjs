@@ -10,7 +10,6 @@ import { UserMeResult } from ".";
 import useRandom from "@libs/clients/useRandom";
 import LoadingTextWavy from "@components/loading-text-wavy";
 import UserAvatar from "@components/user-avatar";
-import { useRouter } from "next/router";
 
 interface UserModifyForm {
   email: string | null;
@@ -23,7 +22,15 @@ interface UserModifyForm {
 
 export default function Modify() {
   const { data, error, mutate } = useSWR<UserMeResult>("/api/v1/users/me");
-  const { handleSubmit, register, setValue, watch } = useForm<UserModifyForm>();
+  const {
+    handleSubmit,
+    register,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm<UserModifyForm>();
+  console.log(errors);
+
   const { objectComparator } = useDiff();
   const [modify, { ok: modifyOk, error: modifyError, loading: modifyLoading }] =
     useMutation("/api/v1/users/me/modify");
@@ -50,13 +57,18 @@ export default function Modify() {
         if (hasUploadUrl && avatar?.length && data) {
           const file = avatar[0] as File;
 
+          const hostname =
+            location.hostname === "localhost"
+              ? "where-is-local"
+              : location.hostname;
+
           const form = new FormData();
           form.append(
             "file",
             file,
-            `/${location.hostname}/users/${
-              data.me.id
-            }/avatars/${createRandomString()}-${file.name}`
+            `/${hostname}/users/${data.me.id}/avatars/${createRandomString()}-${
+              file.name
+            }`
           );
 
           const { result: uploadedResult } = await fetch(uploadUrl?.uploadURL, {
@@ -199,6 +211,9 @@ export default function Modify() {
                   required
                 />
               </div>
+              {errors.name ? (
+                <span className="error-message">{errors.name.message}</span>
+              ) : null}
 
               {/* Phone */}
               <div className="flex items-center gap-2">

@@ -24,7 +24,7 @@ const MapUserInfoBox = ({
           animate={{ scale: 1, rotate: 0 }}
           transition={{ type: "spring", stiffness: 260, damping: 20 }}
           exit={{ scale: 0, rotate: 90 }}
-          className="absolute left-2 top-2 rounded-md py-1 px-2 bg-white border border-black cursor-default"
+          className="absolute left-2 top-2 rounded-md py-1 px-2 bg-white border border-black cursor-default shadow-md"
         >
           <div className="flex justify-between items-center text-gray-600">
             <Link

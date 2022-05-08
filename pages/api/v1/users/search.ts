@@ -37,20 +37,30 @@ const usersSearch = async (
       },
       include: {
         followers: true,
+        receiveFollowingOffers: { select: { id: true } },
       },
     });
 
     const parsedUser = foundUsers.map(
-      ({ id, avatar, name, email, followers }) => {
+      ({ id, avatar, name, email, followers, receiveFollowingOffers }) => {
         const isFollower = followers?.some(
           (followersUser) => followersUser.id === request.session.user?.id
         );
+
+        const received = receiveFollowingOffers.some(
+          ({ id }) => id === request.session.user.id
+        );
+
         return {
           id,
           avatar,
           name,
           email,
-          isFollower,
+          followStatus: isFollower
+            ? "FOLLOW"
+            : received
+            ? "PENDING"
+            : "UNFOLLOW",
         };
       }
     );

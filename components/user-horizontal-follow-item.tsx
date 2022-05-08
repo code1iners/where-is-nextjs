@@ -4,9 +4,9 @@ import { Member } from "@pages/members/additions";
 
 interface UserHorizontalFollowItemProps {
   user: Member;
-  isFollowLoading: boolean;
-  onItemClick: () => void;
-  onFollowClick: () => void;
+  isFollowLoading?: boolean;
+  onItemClick?: () => void;
+  onFollowClick?: () => void;
 }
 
 const UserHorizontalFollowItem = ({
@@ -33,9 +33,9 @@ const UserHorizontalFollowItem = ({
       <button
         className={clazz(
           "p-1 rounded-md border hover:text-white transition-colors",
-          user.isFollower
-            ? "border-red-500 hover:bg-red-500"
-            : "border-purple-600 hover:bg-purple-600"
+          user.followStatus === "UNFOLLOW"
+            ? "border-purple-600 hover:bg-purple-600"
+            : "border-red-500 hover:bg-red-500"
         )}
         onClick={onFollowClick}
       >
@@ -59,7 +59,7 @@ const UserHorizontalFollowItem = ({
               d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
             />
           </svg>
-        ) : user.isFollower ? (
+        ) : user.followStatus === "FOLLOW" ? (
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-5 w-5"
@@ -72,6 +72,21 @@ const UserHorizontalFollowItem = ({
               strokeLinecap="round"
               strokeLinejoin="round"
               d="M13 7a4 4 0 11-8 0 4 4 0 018 0zM9 14a6 6 0 00-6 6v1h12v-1a6 6 0 00-6-6zM21 12h-6"
+            />
+          </svg>
+        ) : user.followStatus === "PENDING" ? (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5 rotate-45 translate-x-[2px] translate-y-[-1px]"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
             />
           </svg>
         ) : (

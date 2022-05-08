@@ -3,7 +3,7 @@
 
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["referentialIntegrity"]
+  previewFeatures = ["referentialIntegrity", "interactiveTransactions"]
 }
 
 datasource db {
@@ -13,44 +13,36 @@ datasource db {
 }
 
 model User {
-  id         Int          @id @default(autoincrement())
-  email      String       @unique
-  name       String
-  password   String
-  phone      String?      @unique
-  avatar     String?
-  gender     Gender?
-  followings User[]       @relation("UserFollow", references: [id])
-  followers  User[]       @relation("UserFollow", references: [id])
-  locations  Location[]
-  suggester  Suggester[]
-  settings   UserSetting?
-  createdAt  DateTime     @default(now())
-  updatedAt  DateTime     @updatedAt
-}
-
-model UserSetting {
-  id            Int      @id @default(autoincrement())
-  isDormant     Boolean  @default(true)
-  isTakeSuggest Boolean  @default(true)
-  user          User     @relation(fields: [userId], references: [id])
-  userId        Int      @unique
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-}
-
-model Suggester {
-  id          Int      @id @default(autoincrement())
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId      Int
-  isConfirmed Boolean
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id                     Int          @id @default(autoincrement())
+  email                  String       @unique
+  name                   String
+  password               String
+  phone                  String?      @unique
+  avatar                 String?
+  gender                 Gender?
+  followings             User[]       @relation("UserFollow", references: [id])
+  followers              User[]       @relation("UserFollow", references: [id])
+  sendFollowingOffers    User[]       @relation("UserFollowingOffer", references: [id])
+  receiveFollowingOffers User[]       @relation("UserFollowingOffer", references: [id])
+  locations              Location[]
+  settings               UserSetting?
+  createdAt              DateTime     @default(now())
+  updatedAt              DateTime     @updatedAt
 }
 
 enum Gender {
   FEMALE
   MALE
+}
+
+model UserSetting {
+  id                   Int      @id @default(autoincrement())
+  isDormant            Boolean  @default(true)
+  isReceiveFollowOffer Boolean  @default(true)
+  user                 User     @relation(fields: [userId], references: [id])
+  userId               Int      @unique
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
 }
 
 model Location {

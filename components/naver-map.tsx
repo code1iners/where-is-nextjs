@@ -148,6 +148,7 @@ const NaverMap = () => {
         });
         myMarker.set("data", data.me);
         myMarker.eventTarget?.classList.add("animate-baam");
+        myMarker.eventTarget?.classList.add("shadow-md");
         setMarkers((previous) => [...previous, myMarker]);
         naver.maps.Event.addListener(myMarker, "click", (e) => {
           setSelectedMember(data.me);
@@ -187,6 +188,7 @@ const NaverMap = () => {
           memberMarker.set("data", member);
           memberMarker.set("id", `marker-user-${member.id}`);
           memberMarker.eventTarget?.classList.add("animate-baam");
+          memberMarker.eventTarget?.classList.add("shadow-md");
           memberMarker.eventTarget?.classList.add(
             `animation-delay-${index + 1}00`
           );
@@ -255,7 +257,7 @@ const NaverMap = () => {
       <div className="absolute right-5 bottom-20 bg-white rounded-full">
         <button
           className={clazz(
-            "flex justify-center items-center p-1 waving-hand",
+            "flex justify-center items-center p-1 waving-hand shadow-md rounded-full",
             isRefreshing ? "animate-spin-reverse" : ""
           )}
           onClick={onRefreshClick}

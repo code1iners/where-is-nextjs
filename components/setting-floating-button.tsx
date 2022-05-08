@@ -37,7 +37,7 @@ const SettingFloatingButton = ({
     <Link href={"/settings"}>
       <a
         className={clazz(
-          `absolute p-2 cursor-pointer rounded-full bg-white transition duration-300 border-gray-300 border-2 hover:border-gray-400 z-10
+          `absolute p-2 cursor-pointer rounded-full bg-white transition duration-300 z-10 shadow-md
           ${buttonPosition}
           `
         )}

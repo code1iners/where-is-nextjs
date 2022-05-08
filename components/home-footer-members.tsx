@@ -13,7 +13,7 @@ const HomeFooterMembers = () => {
     <ul className="absolute bottom-3 flex items-center gap-2 w-screen p-2 overflow-x-scroll no-scrollbar">
       <Link href={"/members/additions"}>
         <a>
-          <li className="p-2 bg-white rounded-full">
+          <li className="p-2 bg-white rounded-full shadow-md">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-[30px] w-[30px]"
@@ -35,6 +35,7 @@ const HomeFooterMembers = () => {
       {/* Me */}
       {data?.me ? (
         <UserAvatar
+          wrapperClass="shadow-md rounded-full"
           user={data.me}
           onClick={() => setSelectedMember(data.me)}
           hover
@@ -46,6 +47,7 @@ const HomeFooterMembers = () => {
       {data?.me?.followings?.length
         ? data?.me?.followings.map((user, index) => (
             <UserAvatar
+              wrapperClass="shadow-md rounded-full"
               key={user.id}
               user={user}
               onClick={() => setSelectedMember(user)}

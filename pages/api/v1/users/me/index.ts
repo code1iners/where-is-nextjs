@@ -35,6 +35,20 @@ const usersMe = async (request: NextApiRequest, response: NextApiResponse) => {
             updatedAt: true,
           },
         },
+        sendFollowingOffers: {
+          select: {
+            id: true,
+            avatar: true,
+            name: true,
+          },
+        },
+        receiveFollowingOffers: {
+          select: {
+            id: true,
+            avatar: true,
+            name: true,
+          },
+        },
         locations: { orderBy: { createdAt: "desc" } },
       },
     });

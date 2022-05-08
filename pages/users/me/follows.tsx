@@ -5,8 +5,12 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import useSWR from "swr";
-import { UserMeResult } from "@pages/users/me";
+import { UserMeResult, UserWithLocations } from "@pages/users/me";
 import UserHorizontalItem from "@components/user-horizontal-item";
+import UserHorizontalFollowItem from "@components/user-horizontal-follow-item";
+import UserAvatar from "@components/user-avatar";
+import useMutation from "@libs/clients/useMutation";
+import UserHorizontalFollowConfirmItem from "@components/user-horizontal-follow-confirm-item";
 
 type AccessType = "followings" | "followers";
 interface FollowSearchForm {
@@ -14,47 +18,102 @@ interface FollowSearchForm {
 }
 
 const UsersMeFollows = () => {
-  const { query } = useRouter();
+  const { query, push } = useRouter();
+  const { register, watch, getValues } = useForm<FollowSearchForm>();
   const [accessType, setAccessType] = useState<AccessType>(
     query["access-type"] as any
   );
   const onTabClick = (accessType: AccessType) => setAccessType(accessType);
-  const { data } = useSWR<UserMeResult>("/api/v1/users/me");
-  const [filteredUsers, setFilteredUsers] = useState<User[]>();
+  const { data, mutate } = useSWR<UserMeResult>("/api/v1/users/me");
+  console.log(data);
+  const [filteredFollowUsers, setFilteredFollowUsers] = useState<User[]>();
   const [typedUsers, setTypedUsers] = useState<User[]>();
-
-  const { register, watch, getValues } = useForm<FollowSearchForm>();
+  const [
+    modify,
+    {
+      ok: modifyOk,
+      error: modifyError,
+      loading: modifyLoading,
+      data: modifyData,
+    },
+  ] = useMutation("/api/v1/users/me/modify");
 
   // Watch search keyword
   useEffect(() => {
     const searched = getValues("search");
-    if (filteredUsers?.length && !!searched) {
-      const typedUsers = filteredUsers.filter((user) =>
+    if (filteredFollowUsers?.length && !!searched) {
+      const typedUsers = filteredFollowUsers.filter((user) =>
         user.name?.toLowerCase().startsWith(searched.toLowerCase())
       );
       setTypedUsers(typedUsers);
     } else {
       setTypedUsers([]);
     }
-  }, [watch("search"), filteredUsers]);
+  }, [watch("search"), filteredFollowUsers]);
 
   useEffect(() => {
-    switch (accessType) {
-      case "followers":
-        setFilteredUsers(data?.me.followers);
-        break;
+    if (data && data.me) {
+      switch (accessType) {
+        case "followers":
+          setFilteredFollowUsers(data.me.followers);
+          break;
 
-      case "followings":
-        setFilteredUsers(data?.me.followings);
-        break;
+        case "followings":
+          setFilteredFollowUsers(data.me.followings);
+          break;
+      }
     }
-  }, [accessType]);
+  }, [accessType, setFilteredFollowUsers, data]);
+
+  const onUserClick = (user: UserWithLocations) => {
+    push({ pathname: `/users/${user.id}`, query: { name: user.name } });
+  };
+
+  const onReceiveReactionClick = (
+    user: UserWithLocations,
+    isAgree: boolean
+  ) => {
+    if (modifyLoading) return;
+
+    modify({
+      method: "PATCH",
+      data: {
+        receiveOfferReaction: {
+          targetUserId: user.id,
+          isAgree,
+        },
+      },
+    });
+  };
+
+  const onSendReactionClick = (user: User) => {
+    if (modifyLoading) return;
+
+    modify({
+      method: "PATCH",
+      data: {
+        sendOfferResponse: {
+          targetUserId: user.id,
+        },
+      },
+    });
+  };
+
+  useEffect(() => {
+    if (modifyOk) {
+      mutate();
+    }
+
+    if (modifyError) {
+      console.error("[modify]", modifyError);
+    }
+  }, [modifyOk, modifyError, modifyLoading]);
 
   return (
     <MobileLayout seoTitle="Followings">
       <article className="space-y-5">
         {/* Search */}
-        <section className="w-full">
+        <section className="w-full shadow-md">
           <div>
             <div className="flex items-center relative">
               <input
@@ -71,7 +130,7 @@ const UsersMeFollows = () => {
               />
 
               <datalist id="user-list">
-                {filteredUsers?.map((user) => (
+                {filteredFollowUsers?.map((user) => (
                   <option key={user.id} value={user.name} />
                 ))}
               </datalist>
@@ -79,7 +138,8 @@ const UsersMeFollows = () => {
           </div>
         </section>
 
-        <section className="border border-gray-500 rounded-md">
+        {/* Follow section */}
+        <section className="border border-gray-500 rounded-md shadow-md">
           {/* Tabs */}
           <div className="flex justify-around items-center border-black relative">
             <button
@@ -121,8 +181,8 @@ const UsersMeFollows = () => {
                     </h1>
                   </div>
                 )
-              ) : filteredUsers?.length ? (
-                filteredUsers?.map((user) => (
+              ) : filteredFollowUsers?.length ? (
+                filteredFollowUsers?.map((user) => (
                   <UserHorizontalItem key={user.id} user={user} />
                 ))
               ) : (
@@ -135,6 +195,62 @@ const UsersMeFollows = () => {
             </ul>
           </div>
         </section>
+
+        {/* Received offers section */}
+        {data?.me?.receiveFollowingOffers.length ? (
+          <section className="border border-gray-500 rounded-md shadow-md">
+            <div className="border border-b-gray-500 p-2 flex justify-between items-center cursor-default">
+              <h3 className="text-sm hover:text-purple-500 transition-colors">
+                받은 팔로우 요청
+              </h3>
+              <span className="text-xs hover:text-purple-500 transition-colors">
+                총 {data?.me?.receiveFollowingOffers.length} 개의 요청
+              </span>
+            </div>
+
+            <ul className="divide-y divide-gray-300 flex flex-col mx-2">
+              {data.me.receiveFollowingOffers?.map((user) => (
+                <UserHorizontalFollowConfirmItem
+                  key={user.id}
+                  user={user}
+                  onUserClick={() => onUserClick(user)}
+                  onAgreeClick={() => onReceiveReactionClick(user, true)}
+                  onDisagreeClick={() => onReceiveReactionClick(user, false)}
+                  isLoading={modifyLoading}
+                  enableAgreeButton
+                  enableDisagreeButton
+                />
+              ))}
+            </ul>
+          </section>
+        ) : null}
+
+        {/* Received offers section */}
+        {data?.me?.sendFollowingOffers.length ? (
+          <section className="border border-gray-500 rounded-md shadow-md">
+            <div className="border border-b-gray-500 p-2 flex justify-between items-center cursor-default">
+              <h3 className="text-sm hover:text-purple-500 transition-colors">
+                보낸 팔로우 요청
+              </h3>
+              <span className="text-xs hover:text-purple-500 transition-colors">
+                총 {data?.me?.sendFollowingOffers.length} 개의 요청
+              </span>
+            </div>
+
+            <ul className="divide-y divide-gray-300 flex flex-col mx-2">
+              {data.me.sendFollowingOffers?.map((user) => (
+                <UserHorizontalFollowConfirmItem
+                  key={user.id}
+                  user={user}
+                  onUserClick={() => onUserClick(user)}
+                  onDisagreeClick={() => onSendReactionClick(user)}
+                  isLoading={modifyLoading}
+                  enableDisagreeButton
+                />
+              ))}
+            </ul>
+          </section>
+        ) : null}
       </article>
     </MobileLayout>
   );
