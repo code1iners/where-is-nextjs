@@ -29,8 +29,6 @@ async function authLogin(request: LoginRequestBody, response: NextApiResponse) {
       },
     });
 
-    console.log("foundUser", foundUser);
-
     if (!foundUser) {
       return response.status(404).json({
         ok: false,

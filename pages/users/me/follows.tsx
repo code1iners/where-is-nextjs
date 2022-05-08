@@ -25,7 +25,7 @@ const UsersMeFollows = () => {
   );
   const onTabClick = (accessType: AccessType) => setAccessType(accessType);
   const { data, mutate } = useSWR<UserMeResult>("/api/v1/users/me");
-  console.log(data);
+
   const [filteredFollowUsers, setFilteredFollowUsers] = useState<User[]>();
   const [typedUsers, setTypedUsers] = useState<User[]>();
   const [

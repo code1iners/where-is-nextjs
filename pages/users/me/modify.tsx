@@ -29,7 +29,6 @@ export default function Modify() {
     watch,
     formState: { errors },
   } = useForm<UserModifyForm>();
-  console.log(errors);
 
   const { objectComparator } = useDiff();
   const [modify, { ok: modifyOk, error: modifyError, loading: modifyLoading }] =
