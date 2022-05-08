@@ -22,7 +22,7 @@ const usersMe = async (request: NextApiRequest, response: NextApiResponse) => {
             id: true,
             avatar: true,
             name: true,
-            locations: true,
+            locations: { orderBy: { createdAt: "desc" } },
             updatedAt: true,
           },
         },
@@ -31,13 +31,11 @@ const usersMe = async (request: NextApiRequest, response: NextApiResponse) => {
             id: true,
             avatar: true,
             name: true,
-            locations: true,
+            locations: { orderBy: { createdAt: "desc" } },
             updatedAt: true,
           },
         },
-        locations: {
-          orderBy: { createdAt: "desc" },
-        },
+        locations: { orderBy: { createdAt: "desc" } },
       },
     });
 

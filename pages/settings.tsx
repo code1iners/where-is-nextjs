@@ -1,8 +1,11 @@
-import MobileLayout from "@components/mobile-layout";
-import useMutation from "@libs/clients/useMutation";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
+import { useSetRecoilState } from "recoil";
+import { useSWRConfig } from "swr";
+import MobileLayout from "@components/mobile-layout";
+import useMutation from "@libs/clients/useMutation";
+import { selectedMemberAtom } from "atoms";
 
 const Settings: NextPage = () => {
   const router = useRouter();
@@ -12,14 +15,19 @@ const Settings: NextPage = () => {
   ] = useMutation("/api/v1/auth/delete");
   const [logout, { ok: logoutOk, error: logoutError, loading: logoutLoading }] =
     useMutation("/api/v1/auth/logout");
+  const setSelectedMember = useSetRecoilState(selectedMemberAtom);
+  const { cache } = useSWRConfig();
 
   const onLogoutClick = () => {
     if (logoutLoading) return;
 
     if (window.confirm("정말로 로그아웃 하시겠습니까?")) {
+      sessionStorage.removeItem("ACCESS_TOKEN");
+      setSelectedMember(undefined);
+      cache.delete("/api/v1/users/me");
+
       logout();
 
-      sessionStorage.removeItem("ACCESS_TOKEN");
       router.replace("/auth/login");
     }
   };

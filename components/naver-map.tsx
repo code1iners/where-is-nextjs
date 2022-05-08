@@ -161,15 +161,16 @@ const NaverMap = () => {
 
       filteredMembers.forEach((member, index) => {
         const memberLastCoord = getLastCoordinates(member.locations);
+
         if (memberLastCoord) {
           const center = createPosition(
-            Number(memberLastCoord.latitude),
-            Number(memberLastCoord.longitude)
+            memberLastCoord.latitude,
+            memberLastCoord.longitude
           );
 
           const memberMarker: any = createMarker({
             map: naverMap,
-            position: center.destinationPoint(90, 15),
+            position: center,
             title: member.name,
             icon: {
               content: member.avatar

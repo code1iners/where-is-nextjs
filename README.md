@@ -44,6 +44,7 @@ This is a simple geo location service application.
   - [x] Add following & followed.
   - [x] Remove following & followed.
   - [x] Listing following members.
+  - [ ] Fixed an issue that could not be refreshed.
   - [ ] Draw members in my profile page.
   - [x] Improve follow delay.
   - [x] Find user pagination.
@@ -76,7 +77,7 @@ This is a simple geo location service application.
   - [ ] Development page access control.
   - [ ] Toast message box.
 
-- #### Geolocation
+- #### Geolocation.
 
   - [x] Create geolocation model.
 
