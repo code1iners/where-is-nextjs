@@ -21,8 +21,15 @@ async function authLogin(request: LoginRequestBody, response: NextApiResponse) {
 
     const foundUser = await client.user.findUnique({
       where: { email },
-      select: { id: true, name: true, password: true },
+      select: {
+        id: true,
+        name: true,
+        password: true,
+        settings: { select: { id: true, isDormant: true } },
+      },
     });
+
+    console.log("foundUser", foundUser);
 
     if (!foundUser) {
       return response.status(404).json({
@@ -46,10 +53,11 @@ async function authLogin(request: LoginRequestBody, response: NextApiResponse) {
       });
     }
 
-    // Update dormant.
-    await client.user.update({
-      where: { id: foundUser.id },
-      data: { isDormant: true },
+    // Insert or Update dormant status.
+    await client.userSetting.upsert({
+      create: { userId: foundUser.id, isDormant: false },
+      update: { isDormant: false },
+      where: { userId: foundUser.id },
     });
 
     // Set session.

@@ -39,6 +39,7 @@ This is a simple geo location service application.
   - [x] Retrieve user detail.
   - [x] User follow/unfollow service.
   - [x] Removed unnecessary search button in follow page.
+  - [x] Create user setting model.
 
 - #### Members.
 

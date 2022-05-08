@@ -46,7 +46,9 @@ async function authJoin(request: JoinRequestBody, response: NextApiResponse) {
         name: username,
         password: hashedPassword,
         email,
-        isDormant: true,
+        settings: {
+          create: { isDormant: false },
+        },
       },
       select: {
         id: true,
