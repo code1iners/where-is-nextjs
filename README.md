@@ -37,12 +37,13 @@ This is a simple geo location service application.
 
   - [x] Update user's profile.
   - [x] Retrieve user detail.
-  - [x] User unfollow service.
+  - [x] User follow/unfollow service.
+  - [x] Removed unnecessary search button in follow page.
 
 - #### Members.
 
-  - [x] Add following & followed.
-  - [x] Remove following & followed.
+  - [x] Add following & follower.
+  - [x] Remove following & follower.
   - [x] Listing following members.
   - [ ] Fixed an issue that could not be refreshed.
   - [ ] Draw members in my profile page.
