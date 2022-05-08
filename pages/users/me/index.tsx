@@ -11,6 +11,7 @@ export interface UserWithLocations extends User {
 export interface CustomUser extends User {
   followings: UserWithLocations[];
   followers: UserWithLocations[];
+  followStatus?: "PENDING" | "FOLLOW" | "UNFOLLOW";
   sendFollowingOffers: UserWithLocations[];
   receiveFollowingOffers: UserWithLocations[];
   locations: Location[];

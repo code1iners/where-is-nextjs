@@ -16,7 +16,11 @@ const findUserById = async (
   try {
     const foundUser = await client.user.findUnique({
       where: { id: +request.query.id },
-      include: { followings: true, followers: true },
+      include: {
+        followings: true,
+        followers: true,
+        receiveFollowingOffers: { select: { id: true } },
+      },
     });
 
     // There is no user?
@@ -32,8 +36,17 @@ const findUserById = async (
 
     // Is following?
     const isFollowing = foundUser.followers.some(
-      (follower) => follower.id === request.session.user?.id
+      (follower) => follower.id === request.session.user.id
     );
+    const isPending = foundUser.receiveFollowingOffers.some(
+      (offer) => offer.id === request.session.user.id
+    );
+
+    const followStatus = isFollowing
+      ? "FOLLOW"
+      : isPending
+      ? "PENDING"
+      : "UNFOLLOW";
 
     const data = {
       id: foundUser.id,
@@ -43,7 +56,7 @@ const findUserById = async (
       gender: foundUser.gender,
       followings: foundUser.followings,
       followers: foundUser.followers,
-      isFollowing,
+      followStatus,
     };
 
     return response.status(200).json({

@@ -1,18 +1,17 @@
 import Link from "next/link";
 import UserAvatar from "@components/user-avatar";
 import { CustomUser } from "@pages/users/me";
-import { User } from "@prisma/client";
 import { useEffect, useState } from "react";
 import useMutation from "@libs/clients/useMutation";
 
 interface UserDetailProps {
   user: CustomUser;
   me?: CustomUser;
+  onRefresh?: () => void;
 }
 
-const UserDetail = ({ user, me }: UserDetailProps) => {
+const UserDetail = ({ user, me, onRefresh }: UserDetailProps) => {
   const [isMe, setIsMe] = useState(false);
-  const [isFollowing, setIsFollowing] = useState(false);
   const [
     follow,
     {
@@ -26,12 +25,6 @@ const UserDetail = ({ user, me }: UserDetailProps) => {
   useEffect(() => {
     if (user && me) {
       setIsMe(user.id === me.id);
-
-      // Check is following.
-      const isFollowed = me.followings.some(
-        (following) => following.id === user.id
-      );
-      setIsFollowing(isFollowed);
     } else {
       setIsMe(true);
     }
@@ -44,14 +37,13 @@ const UserDetail = ({ user, me }: UserDetailProps) => {
 
   useEffect(() => {
     if (followOk && followData) {
-      const { isFollowing } = followData;
-      setIsFollowing(isFollowing);
+      if (onRefresh) onRefresh();
     }
 
     if (followError) {
       console.error("[follow]", followError);
     }
-  }, [followOk, followData, followError]);
+  }, [followOk, followData, followError, followLoading, onRefresh]);
 
   return (
     <>
@@ -139,10 +131,12 @@ const UserDetail = ({ user, me }: UserDetailProps) => {
                     d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
                   />
                 </svg>
-              ) : isFollowing ? (
-                "Unfollow"
+              ) : user.followStatus === "FOLLOW" ? (
+                "UNFOLLOW"
+              ) : user.followStatus === "PENDING" ? (
+                "PENDING"
               ) : (
-                "Follow"
+                "FOLLOW"
               )}
             </button>
           )}
