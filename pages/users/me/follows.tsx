@@ -5,12 +5,13 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import useSWR from "swr";
+import { motion } from "framer-motion";
 import { UserMeResult, UserWithLocations } from "@pages/users/me";
 import UserHorizontalItem from "@components/user-horizontal-item";
-import UserHorizontalFollowItem from "@components/user-horizontal-follow-item";
-import UserAvatar from "@components/user-avatar";
-import useMutation from "@libs/clients/useMutation";
 import UserHorizontalFollowConfirmItem from "@components/user-horizontal-follow-confirm-item";
+import useMutation from "@libs/clients/useMutation";
+import UserHorizontalItemWithAnimation from "@components/user-horizontal-item-with-animation";
+import UserHorizontalFollowConfirmItemWithAnimation from "@components/user-horizontal-follow-confirm-item-with-animation";
 
 type AccessType = "followings" | "followers";
 interface FollowSearchForm {
@@ -110,7 +111,7 @@ const UsersMeFollows = () => {
   }, [modifyOk, modifyError, modifyLoading]);
 
   return (
-    <MobileLayout seoTitle="Followings">
+    <MobileLayout seoTitle="Follow information">
       <article className="space-y-5">
         {/* Search */}
         <section className="w-full shadow-md">
@@ -171,8 +172,12 @@ const UsersMeFollows = () => {
             <ul>
               {getValues("search") ? (
                 typedUsers?.length ? (
-                  typedUsers?.map((user) => (
-                    <UserHorizontalItem key={user.id} user={user} />
+                  typedUsers?.map((user, index) => (
+                    <UserHorizontalItemWithAnimation
+                      key={user.id}
+                      user={user}
+                      index={index}
+                    />
                   ))
                 ) : (
                   <div className="flex justify-center items-center p-4">
@@ -182,8 +187,12 @@ const UsersMeFollows = () => {
                   </div>
                 )
               ) : filteredFollowUsers?.length ? (
-                filteredFollowUsers?.map((user) => (
-                  <UserHorizontalItem key={user.id} user={user} />
+                filteredFollowUsers?.map((user, index) => (
+                  <UserHorizontalItemWithAnimation
+                    key={user.id}
+                    user={user}
+                    index={index}
+                  />
                 ))
               ) : (
                 <div className="flex justify-center items-center p-4">
@@ -209,9 +218,10 @@ const UsersMeFollows = () => {
             </div>
 
             <ul className="divide-y divide-gray-300 flex flex-col mx-2">
-              {data.me.receiveFollowingOffers?.map((user) => (
-                <UserHorizontalFollowConfirmItem
+              {data.me.receiveFollowingOffers?.map((user, index) => (
+                <UserHorizontalFollowConfirmItemWithAnimation
                   key={user.id}
+                  index={index}
                   user={user}
                   onUserClick={() => onUserClick(user)}
                   onAgreeClick={() => onReceiveReactionClick(user, true)}
@@ -238,9 +248,10 @@ const UsersMeFollows = () => {
             </div>
 
             <ul className="divide-y divide-gray-300 flex flex-col mx-2">
-              {data.me.sendFollowingOffers?.map((user) => (
-                <UserHorizontalFollowConfirmItem
+              {data.me.sendFollowingOffers?.map((user, index) => (
+                <UserHorizontalFollowConfirmItemWithAnimation
                   key={user.id}
+                  index={index}
                   user={user}
                   onUserClick={() => onUserClick(user)}
                   onDisagreeClick={() => onSendReactionClick(user)}

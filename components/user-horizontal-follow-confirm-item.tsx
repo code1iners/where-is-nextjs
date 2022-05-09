@@ -1,7 +1,7 @@
 import { User } from "@prisma/client";
 import UserAvatar from "@components/user-avatar";
 
-interface UserHorizontalFollowConfirmItemProps {
+export interface UserHorizontalFollowConfirmItemProps {
   user: User;
   isLoading?: boolean;
   enableAgreeButton?: boolean;

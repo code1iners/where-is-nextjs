@@ -2,7 +2,7 @@ import Link from "next/link";
 import { User } from "@prisma/client";
 import UserAvatar from "@components/user-avatar";
 
-interface UserHorizontalItemProps {
+export interface UserHorizontalItemProps {
   user: User;
 }
 
