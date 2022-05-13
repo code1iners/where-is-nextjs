@@ -11,10 +11,10 @@ interface UserHorizontalItemWithAnimationProps extends UserHorizontalItemProps {
 const UserHorizontalItemWithAnimation = ({
   user,
   index,
-  delayValue = 0.125,
+  delayValue = 0.1,
 }: UserHorizontalItemWithAnimationProps) => {
   return (
-    <motion.li
+    <motion.div
       initial={{
         opacity: 0,
       }}
@@ -26,7 +26,7 @@ const UserHorizontalItemWithAnimation = ({
       }}
     >
       <UserHorizontalItem user={user} />
-    </motion.li>
+    </motion.div>
   );
 };
 

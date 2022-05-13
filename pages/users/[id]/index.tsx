@@ -19,11 +19,7 @@ const UserRetrieve = () => {
     <MobileLayout seoTitle={(name as string) ?? "User Retrieve"}>
       <article className="flex flex-col divide-y">
         {foundUser?.ok ? (
-          <UserDetail
-            user={foundUser?.data}
-            me={meData?.me}
-            onRefresh={() => foundUserMutate()}
-          />
+          <UserDetail user={foundUser?.data} me={meData?.me} />
         ) : (
           <section
             className="flex justify-center items-center cursor-pointer hover:text-purple-500"

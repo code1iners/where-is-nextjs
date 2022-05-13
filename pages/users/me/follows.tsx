@@ -5,10 +5,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import useSWR from "swr";
-import { motion } from "framer-motion";
 import { UserMeResult, UserWithLocations } from "@pages/users/me";
-import UserHorizontalItem from "@components/user-horizontal-item";
-import UserHorizontalFollowConfirmItem from "@components/user-horizontal-follow-confirm-item";
 import useMutation from "@libs/clients/useMutation";
 import UserHorizontalItemWithAnimation from "@components/user-horizontal-item-with-animation";
 import UserHorizontalFollowConfirmItemWithAnimation from "@components/user-horizontal-follow-confirm-item-with-animation";
@@ -29,6 +26,12 @@ const UsersMeFollows = () => {
 
   const [filteredFollowUsers, setFilteredFollowUsers] = useState<User[]>();
   const [typedUsers, setTypedUsers] = useState<User[]>();
+  const [receiveFollowingOffers, setReceiveFollowingOffers] = useState<
+    UserWithLocations[]
+  >([]);
+  const [sendFollowingOffers, setSendFollowingOffers] = useState<
+    UserWithLocations[]
+  >([]);
   const [
     modify,
     {
@@ -63,6 +66,9 @@ const UsersMeFollows = () => {
           setFilteredFollowUsers(data.me.followings);
           break;
       }
+
+      setReceiveFollowingOffers(data.me.receiveFollowingOffers);
+      setSendFollowingOffers(data.me.sendFollowingOffers);
     }
   }, [accessType, setFilteredFollowUsers, data]);
 
@@ -75,6 +81,10 @@ const UsersMeFollows = () => {
     isAgree: boolean
   ) => {
     if (modifyLoading) return;
+
+    setReceiveFollowingOffers((previous) => {
+      return previous.filter(({ id }) => id !== user.id);
+    });
 
     modify({
       method: "PATCH",
@@ -89,6 +99,11 @@ const UsersMeFollows = () => {
 
   const onSendReactionClick = (user: User) => {
     if (modifyLoading) return;
+
+    console.log(sendFollowingOffers, user);
+    setSendFollowingOffers((previous) => {
+      return previous.filter(({ id }) => id !== user.id);
+    });
 
     modify({
       method: "PATCH",
@@ -169,7 +184,7 @@ const UsersMeFollows = () => {
 
           {/* User list */}
           <div>
-            <ul>
+            <div>
               {getValues("search") ? (
                 typedUsers?.length ? (
                   typedUsers?.map((user, index) => (
@@ -201,24 +216,24 @@ const UsersMeFollows = () => {
                   </h1>
                 </div>
               )}
-            </ul>
+            </div>
           </div>
         </section>
 
         {/* Received offers section */}
-        {data?.me?.receiveFollowingOffers.length ? (
+        {receiveFollowingOffers.length ? (
           <section className="border border-gray-500 rounded-md shadow-md">
             <div className="border border-b-gray-500 p-2 flex justify-between items-center cursor-default">
               <h3 className="text-sm hover:text-purple-500 transition-colors">
                 받은 팔로우 요청
               </h3>
               <span className="text-xs hover:text-purple-500 transition-colors">
-                총 {data?.me?.receiveFollowingOffers.length} 개의 요청
+                총 {receiveFollowingOffers.length} 개의 요청
               </span>
             </div>
 
-            <ul className="divide-y divide-gray-300 flex flex-col mx-2">
-              {data.me.receiveFollowingOffers?.map((user, index) => (
+            <div className="divide-y divide-gray-300 flex flex-col mx-2">
+              {receiveFollowingOffers.map((user, index) => (
                 <UserHorizontalFollowConfirmItemWithAnimation
                   key={user.id}
                   index={index}
@@ -231,24 +246,24 @@ const UsersMeFollows = () => {
                   enableDisagreeButton
                 />
               ))}
-            </ul>
+            </div>
           </section>
         ) : null}
 
         {/* Received offers section */}
-        {data?.me?.sendFollowingOffers.length ? (
+        {sendFollowingOffers.length ? (
           <section className="border border-gray-500 rounded-md shadow-md">
             <div className="border border-b-gray-500 p-2 flex justify-between items-center cursor-default">
               <h3 className="text-sm hover:text-purple-500 transition-colors">
                 보낸 팔로우 요청
               </h3>
               <span className="text-xs hover:text-purple-500 transition-colors">
-                총 {data?.me?.sendFollowingOffers.length} 개의 요청
+                총 {sendFollowingOffers.length} 개의 요청
               </span>
             </div>
 
-            <ul className="divide-y divide-gray-300 flex flex-col mx-2">
-              {data.me.sendFollowingOffers?.map((user, index) => (
+            <div className="divide-y divide-gray-300 flex flex-col mx-2">
+              {sendFollowingOffers.map((user, index) => (
                 <UserHorizontalFollowConfirmItemWithAnimation
                   key={user.id}
                   index={index}
@@ -259,7 +274,7 @@ const UsersMeFollows = () => {
                   enableDisagreeButton
                 />
               ))}
-            </ul>
+            </div>
           </section>
         ) : null}
       </article>

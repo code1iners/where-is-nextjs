@@ -7,11 +7,13 @@ import useMutation from "@libs/clients/useMutation";
 interface UserDetailProps {
   user: CustomUser;
   me?: CustomUser;
-  onRefresh?: () => void;
 }
 
-const UserDetail = ({ user, me, onRefresh }: UserDetailProps) => {
+type FollowStatus = "PENDING" | "FOLLOW" | "UNFOLLOW";
+
+const UserDetail = ({ user, me }: UserDetailProps) => {
   const [isMe, setIsMe] = useState(false);
+  const [followStatus, setFollowStatus] = useState<FollowStatus>();
   const [
     follow,
     {
@@ -37,13 +39,33 @@ const UserDetail = ({ user, me, onRefresh }: UserDetailProps) => {
 
   useEffect(() => {
     if (followOk && followData) {
-      if (onRefresh) onRefresh();
+      updateFollowStatus(followData.followStatus as any);
     }
 
     if (followError) {
       console.error("[follow]", followError);
     }
-  }, [followOk, followData, followError, followLoading, onRefresh]);
+  }, [followOk, followData, followError, followLoading]);
+
+  const updateFollowStatus = (followStatus: FollowStatus) => {
+    switch (followStatus) {
+      case "FOLLOW":
+        setFollowStatus("UNFOLLOW");
+        break;
+      case "UNFOLLOW":
+        setFollowStatus("FOLLOW");
+        break;
+      case "PENDING":
+        setFollowStatus("PENDING");
+        break;
+    }
+  };
+
+  useEffect(() => {
+    if (!isMe && user) {
+      updateFollowStatus(user.followStatus as any);
+    }
+  }, [isMe, user]);
 
   return (
     <>
@@ -131,12 +153,8 @@ const UserDetail = ({ user, me, onRefresh }: UserDetailProps) => {
                     d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
                   />
                 </svg>
-              ) : user.followStatus === "FOLLOW" ? (
-                "UNFOLLOW"
-              ) : user.followStatus === "PENDING" ? (
-                "PENDING"
               ) : (
-                "FOLLOW"
+                followStatus
               )}
             </button>
           )}
